@@ -7,16 +7,11 @@ Localeasy talks to Google Sheets API, downloads translations, and formats them t
 - [Installation](#installation)
 - [Project setup](#project-setup)
 - [Usage](#usage)
-- [Project configuration(localeasy.json)](#project-configuration-localeasyjson-)
-  - [Example (iOS)](#example--ios-)
-- [Exporting translations from Phrase](#exporting-translations-from-phrase)
+- [Project configuration](#project-configuration)
 - [Writing localized strings in Google Sheets](#writing-localized-strings-in-google-sheets)
-  - [Placeholders (iOS, Android)](#placeholders--ios--android-)
   - [Platform specific strings](#platform-specific-strings)
-- [iOS: Validating generated files](#ios--validating-generated-files)
-- [Experimental: Placeholder conversion](#experimental--placeholder-conversion)
+  - [Automatic placeholder conversion](#automatic-placeholder-conversion)
 - [Development](#development)
-  - [Running locally](#Running locally)
 
 ## Installation
 
@@ -32,7 +27,6 @@ You can also just download and run the latest binary.
 
 ## Project setup
 
-1. Create a spreadsheet that will hold your translations. On the first row of each column, add these strings: `key|comment|<locale>`.
 1. In your project folder, run `localeasy init` to intialize your project configuration. Add the generated `localeasy.json` file to source control.
 1. Edit the created `localeasy.json` file. See [Project configuration](#project-configuration-localeasyjson-).
 1. Run `localeasy pull` to pull the latest translations. The first time you need to grant access to the spreadsheet. Simply follow the prompts in your terminal.
@@ -50,7 +44,7 @@ The project configuration file (localeasy.json) contains several keys that need 
 - `platform`: The platform of your project. Either `android` or `ios`.
 - `locales`: An object containing all locales that you want to support. The keys of this object correspond to colum headers in your spreadsheet. The values correspond to the filepaths where the files should be generated.
 
-### Example (iOS)
+### Example
 
 ```json
 {
@@ -64,17 +58,39 @@ The project configuration file (localeasy.json) contains several keys that need 
 }
 ```
 
-## Platform specific strings
+## Writing translations in Google Sheets
 
-Creating platform specific strings can be done by postfixing keys with the platform name, for example:
-`title_ios` and `title_android`. Entries that are not for the active platform will be ignored, and the key will show up as `title` in the generated files.
+### Spreadsheet
 
-## Automatic placeholder conversion
+The first row of your spreadsheet should contain column headers that localeasy uses to identify each column. The order of the columns does not matter:
 
-Localeasy will automatically convert placeholders to each platform specific format. There are a few limitations to keep in mind:
+- `key`: The column that contains the key of a translation entry
+- `comment`: The column that contains an optional comment for the entry. This column can be omitted.
+- `<locale1>`: The column that contains the translated text for the entry. The name of this column must correspond to a locale configured in the `localeasy.json` config file. You can have as many locale columns as you need.
+- `<locale2>`: Second locale.
+- `<locale3>`: Third locale, etc.
+
+### Platform specific strings
+
+If you want to provide a custom translation per platform, you can do so by appending the platform name to the translation key. Entries that are not for the active platform will be ignored, and the key will simply show up as `store_title` in the generated files.
+
+For example:
+
+```
+store_title_ios: Find us on the App Store!
+store_title_android: Find us on the Play Store!
+```
+
+### Automatic placeholder conversion
+
+Localasy can automatically convert placeholders to each platform specific format. This means you don't have to create platform specific strings if you need to do interpolation.
+
+For example: The string `Welcome %s!` will be formatted as `Welcome %s!` for Android, and as `Welcome %@!` for iOS.
+
+There are a few limitations to keep in mind:
 
 - Currently the only supported conversion is from `%s` to `%@` for iOS.
-- The conversion will not be applied on platform specific strings, it assumes that those have been converted manually already.
+- The conversion will not be applied to platform specific strings, localeasy assumes that those have been converted manually already.
 
 ## Development
 
