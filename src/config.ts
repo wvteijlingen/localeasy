@@ -51,8 +51,8 @@ function parseConfigJSON(json: string): Config {
     sheetName,
     platform,
     locales,
-    convertPlaceholders = false,
-    stripPlatformPostfixes = false,
+    convertPlaceholders = true,
+    stripPlatformPostfixes = true,
   } = config;
 
   if (!sheetID) {
