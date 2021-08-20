@@ -7,7 +7,7 @@ yargs(Deno.args)
   .scriptName("localeasy")
   .command(
     "pull",
-    "Pulls latest translations based on the localeasy.json",
+    "Pull the latest translations based on the configuration file in the current working directory.",
     () => {
       catchingUserError(async () => {
         const config = await loadConfig("./localeasy.json");
@@ -17,17 +17,18 @@ yargs(Deno.args)
   )
   .command(
     "init",
-    "Creates a localeasy.json configuration file",
+    "Create a localeasy.json configuration file in the current working directory.",
     () => {
       catchingUserError(async () => {
         await init("./localeasy.json");
       });
     },
   )
-  .command("authenticate", "Authenticates", async () => {
+  .command("authenticate", "Reauthenticate with Google Sheets.", async () => {
     await authenticate();
   })
   .strictCommands()
   .demandCommand()
   .help()
-  .argv;
+  .version("1.0.0")
+  .parse();
