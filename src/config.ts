@@ -75,7 +75,7 @@ function parseConfigJSON(json: string): Config {
 
   if (errors.length > 0) {
     throw new UserError(
-      `The config file is invalid:\n- ${errors.join("- \n")}`,
+      `The config file is invalid:\n- ${errors.join("\n- ")}`,
     );
   }
 
