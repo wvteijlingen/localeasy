@@ -1,4 +1,4 @@
-import { yargs } from "../depts.ts";
+import { yargs } from "../deps.ts";
 import { authenticate, init, pull } from "./commands/index.ts";
 import { loadConfig } from "./config.ts";
 import { catchingUserError } from "./error.ts";

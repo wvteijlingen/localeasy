@@ -1,4 +1,4 @@
-import { AuthorizationCodeGrant, blue, serve } from "../../depts.ts";
+import { AuthorizationCodeGrant, blue, serve } from "../../deps.ts";
 import {
   FilePaths,
   initializeGlobalConfigFolderIfNeeded,

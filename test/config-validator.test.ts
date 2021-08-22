@@ -1,4 +1,4 @@
-import { assertEquals, assertThrowsAsync } from "../dev_depts.ts";
+import { assertEquals, assertThrowsAsync } from "../dev_deps.ts";
 import { Config, loadConfig } from "../src/config.ts";
 import { UserError } from "../src/error.ts";
 
