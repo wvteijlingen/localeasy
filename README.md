@@ -60,7 +60,23 @@ The project configuration file (localeasy.json) contains several keys that need 
 
 ## Writing translations in Google Sheets
 
-### Spreadsheet
+## Configuring access to the sheet
+
+For Localeasy to access your sheet, you need to configure some permissions first. The summary is that you want to create an OAuth application configured with the `./auth/spreadsheets.readonly` scope.
+
+Follow these steps to configure the OAuth platform. Note, the steps might change in the future, this is just a guideline:
+
+1. In the [Google Cloud Platform console](https://console.developers.google.com), create a new project that will contain your API access. You can also reuse an existing project if you want.
+1. Navigate to the [API dashboard](https://console.cloud.google.com/apis/dashboard) and click "Enable APIs and Services".
+1. Add the [Google Sheets API](https://console.cloud.google.com/apis/library/sheets.googleapis.com)
+1. Navigate to the [OAuth consent screen dashboard](https://console.cloud.google.com/apis/credentials/consent) and configure the consent screen:
+  1. Add the `./auth/spreadsheets.readonly` scope.
+  1. Add optional test users. If you want to
+1. Navigate to the [credentials](https://console.cloud.google.com/apis/credentials) dashboard and create an "OAuth client ID" credential.
+  1. Select "Desktop app" as the application type.
+  1. Save the Client ID and Client Secret to the `LOCALEASY_CLIENT_ID` and `LOCALEASY_CLIENT_SECRET` environment variables on your machine. When pulling localizations, localeasy will use these keys.
+
+### The spreadsheet layout
 
 The first row of your spreadsheet should contain column headers that localeasy uses to identify each column. The order of the columns does not matter:
 

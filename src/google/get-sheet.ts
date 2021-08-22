@@ -1,15 +1,34 @@
+import { UserError } from "../error.ts";
 import { Sheet } from "../sheet.ts";
-import { getAuthToken } from "./authentication.ts";
+import { getCredentials, refreshCredentials } from "./authentication.ts";
 
-export async function getSheet(id: string, name: string): Promise<Sheet> {
-  const authToken = await getAuthToken();
+export async function getSheet(
+  id: string,
+  name: string,
+  _shouldRefreshCredentials = true,
+): Promise<Sheet> {
+  const credentials = await getCredentials();
 
   const response = await fetch(
     `https://sheets.googleapis.com/v4/spreadsheets/${id}?includeGridData=true&ranges=${name}`,
     {
-      headers: { "Authorization": `Bearer ${authToken}` },
+      headers: { "Authorization": `Bearer ${credentials.access_token}` },
     },
   );
+
+  if (
+    (response.status === 401 || response.status === 403) &&
+    _shouldRefreshCredentials
+  ) {
+    await refreshCredentials(credentials);
+    return await getSheet(id, name, false);
+  }
+
+  if (response.status !== 200) {
+    throw new UserError(
+      `Something went wrong while trying to fetch the sheet. Status code ${response.status}.`,
+    );
+  }
 
   const json = await response.json();
   const rows = json.sheets[0].data[0].rowData;
