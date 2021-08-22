@@ -1,10 +1,11 @@
 import { Config } from "../config.ts";
 import { format } from "../formatter/index.ts";
 import { getSheet } from "../google/get-sheet.ts";
+import { logInfo, logPositive } from "../utils/log.ts";
 
 export async function pull(config: Config) {
-  console.log(
-    `⏳ Pulling translations for "${config.sheetName}" (format: ${config.platform}).`,
+  logPositive(
+    `Pulling translations for "${config.sheetName}" (format: ${config.platform}).`,
   );
 
   const locales = Object.keys(config.locales);
@@ -12,7 +13,7 @@ export async function pull(config: Config) {
   const translations = sheet.translations(locales);
 
   for (const [locale, outputPath] of Object.entries(config.locales)) {
-    console.log(`⏳ Updating file "${outputPath}"`);
+    logInfo(`Updating file "${outputPath}"`);
 
     const entries = translations.map((translation) => ({
       locale,
@@ -25,6 +26,6 @@ export async function pull(config: Config) {
 
     await Deno.writeTextFile(outputPath, formattedOutput);
 
-    console.log("✅ Translations updated succesfully");
+    logPositive("Translations updated succesfully");
   }
 }

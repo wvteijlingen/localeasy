@@ -1,4 +1,4 @@
-import yargs from "https://deno.land/x/yargs@v17.1.1-deno/deno.ts";
+import { yargs } from "../depts.ts";
 import { authenticate, init, pull } from "./commands/index.ts";
 import { loadConfig } from "./config.ts";
 import { catchingUserError } from "./error.ts";

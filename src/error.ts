@@ -1,3 +1,5 @@
+import { logNegative } from "./utils/log.ts";
+
 export class UserError extends Error {
   constructor(message: string) {
     super(message);
@@ -8,7 +10,7 @@ export class UserError extends Error {
 export function catchingUserError(fn: () => Promise<unknown>) {
   fn().catch((error) => {
     if (error instanceof UserError) {
-      console.log(`🛑 ${error.message}`);
+      logNegative(error.message);
     } else {
       throw error;
     }

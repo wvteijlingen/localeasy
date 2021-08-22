@@ -1,10 +1,10 @@
-import { serve } from "https://deno.land/std@0.103.0/http/server.ts";
-import { AuthorizationCodeGrant } from "https://deno.land/x/oauth2_deno@1.1.1/mod.ts";
+import { AuthorizationCodeGrant, blue, serve } from "../../depts.ts";
 import {
   FilePaths,
   initializeGlobalConfigFolderIfNeeded,
 } from "../environment.ts";
 import { UserError } from "../error.ts";
+import { logInfo, logNegative } from "../utils/log.ts";
 
 export async function getCredentials(): Promise<OAuthCredentials> {
   const storedCredentials = await getStoredCredentials();
@@ -26,7 +26,11 @@ export async function getCredentials(): Promise<OAuthCredentials> {
 
   const url = codeGrant.constructAuthorizationRequestURI();
 
-  console.log("Open the following url in your browser:", url);
+  logInfo(
+    `No stored credentials found, open the following url in your browser to authenticate with Google: ${
+      blue(url)
+    }`,
+  );
 
   const code = await listenForOAuthCallback();
 
@@ -36,7 +40,7 @@ export async function getCredentials(): Promise<OAuthCredentials> {
     return response;
   } else {
     throw new UserError(
-      "Something went wrong while trying to authenticate. Please try again.",
+      "Something went wrong while trying to authenticating. Please try again.",
     );
   }
 }
@@ -75,13 +79,14 @@ async function setStoredCredentials(credentials: OAuthCredentials) {
     const json = JSON.stringify(credentials);
     await initializeGlobalConfigFolderIfNeeded();
     await Deno.writeTextFile(FilePaths.oauthCredentials, json);
-    console.log(
-      "Saved authentication credentials to",
-      FilePaths.oauthCredentials,
+    logInfo(
+      `Saved authentication credentials to ${FilePaths.oauthCredentials}`,
     );
   } catch (error) {
-    console.log("Error saving oauth credentials");
-    console.error(error);
+    logNegative(
+      `Error saving oauth credentials to ${FilePaths.oauthCredentials}`,
+    );
+    throw new UserError(error);
   }
 }
 

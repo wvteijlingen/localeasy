@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.105.0/testing/asserts.ts";
+import { assertEquals } from "../dev_depts.ts";
 import { sortTranslations } from "../src/utils/sort.ts";
 
 Deno.test("sortTranslations", () => {

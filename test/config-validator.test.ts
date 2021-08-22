@@ -1,7 +1,4 @@
-import {
-  assertEquals,
-  assertThrowsAsync,
-} from "https://deno.land/std@0.105.0/testing/asserts.ts";
+import { assertEquals, assertThrowsAsync } from "../dev_depts.ts";
 import { Config, loadConfig } from "../src/config.ts";
 import { UserError } from "../src/error.ts";
 

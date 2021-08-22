@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.105.0/testing/asserts.ts";
+import { assertEquals } from "../dev_depts.ts";
 import { input } from "./fixtures/input.ts";
 import { format } from "../src/formatter/ios.ts";
 

@@ -1,5 +1,6 @@
 import { UserError } from "../error.ts";
 import { Sheet } from "../sheet.ts";
+import { logInfo } from "../utils/log.ts";
 import { getCredentials, refreshCredentials } from "./authentication.ts";
 
 export async function getSheet(
@@ -20,6 +21,7 @@ export async function getSheet(
     (response.status === 401 || response.status === 403) &&
     _shouldRefreshCredentials
   ) {
+    logInfo("Access token expired, refreshing credentials...");
     await refreshCredentials(credentials);
     return await getSheet(id, name, false);
   }
@@ -33,7 +35,9 @@ export async function getSheet(
   const json = await response.json();
   const rows = json.sheets[0].data[0].rowData;
 
+  // deno-lint-ignore no-explicit-any
   const cells = rows.map((row: any) => {
+    // deno-lint-ignore no-explicit-any
     return row.values.map((cell: any) => cell.formattedValue);
   });
 

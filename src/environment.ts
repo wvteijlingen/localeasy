@@ -1,5 +1,6 @@
 import { UserError } from "./error.ts";
 import { dirExists } from "./utils/file.ts";
+import { logInfo } from "./utils/log.ts";
 
 const CONFIGURATION_FOLDER = `${homeDirectoryPath()}/.localeasy`;
 
@@ -12,8 +13,8 @@ export async function initializeGlobalConfigFolderIfNeeded() {
     return;
   }
 
-  console.log(
-    `ℹ️ The global configuration directory has been automatically created at ${CONFIGURATION_FOLDER}`,
+  logInfo(
+    `The global configuration directory has been automatically created at ${CONFIGURATION_FOLDER}`,
   );
 
   await Deno.mkdir(CONFIGURATION_FOLDER);

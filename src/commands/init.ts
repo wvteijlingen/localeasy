@@ -1,6 +1,7 @@
 import { writeEmptyConfigFile } from "../config.ts";
+import { logPositive } from "../utils/log.ts";
 
 export async function init(configFilePath: string) {
   await writeEmptyConfigFile(configFilePath);
-  console.log("Config file created.");
+  logPositive("Config file created.");
 }
