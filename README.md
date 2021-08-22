@@ -9,6 +9,7 @@ Localeasy talks to Google Sheets API, downloads translations, and formats them t
 - [Usage](#usage)
 - [Project configuration](#project-configuration)
 - [Writing localized strings in Google Sheets](#writing-localized-strings-in-google-sheets)
+  - [Configuring access to the sheet](#configuring-access-to-the-sheet)
   - [Platform specific strings](#platform-specific-strings)
   - [Automatic placeholder conversion](#automatic-placeholder-conversion)
 - [Development](#development)
@@ -27,6 +28,7 @@ You can also just download and run the latest binary.
 
 ## Project setup
 
+1. Make sure your Google Sheet is set up beforehand. See [Configuring access to the sheet](#configuring-access-to-the-sheet).
 1. In your project folder, run `localeasy init` to intialize your project configuration. Add the generated `localeasy.json` file to source control.
 1. Edit the created `localeasy.json` file. See [Project configuration](#project-configuration-localeasyjson-).
 1. Run `localeasy pull` to pull the latest translations. The first time you need to grant access to the spreadsheet. Simply follow the prompts in your terminal.
@@ -70,11 +72,11 @@ Follow these steps to configure the OAuth platform. Note, the steps might change
 1. Navigate to the [API dashboard](https://console.cloud.google.com/apis/dashboard) and click "Enable APIs and Services".
 1. Add the [Google Sheets API](https://console.cloud.google.com/apis/library/sheets.googleapis.com)
 1. Navigate to the [OAuth consent screen dashboard](https://console.cloud.google.com/apis/credentials/consent) and configure the consent screen:
-  1. Add the `./auth/spreadsheets.readonly` scope.
-  1. Add optional test users. If you want to
-1. Navigate to the [credentials](https://console.cloud.google.com/apis/credentials) dashboard and create an "OAuth client ID" credential.
-  1. Select "Desktop app" as the application type.
-  1. Save the Client ID and Client Secret to the `LOCALEASY_CLIENT_ID` and `LOCALEASY_CLIENT_SECRET` environment variables on your machine. When pulling localizations, localeasy will use these keys.
+   1. Add the `./auth/spreadsheets.readonly` scope.
+   1. Add optional test users. If you want to
+1. Navigate to the [credentials](https://console.cloud.google.com/apis/credentials) dashboard and create an "OAuth client ID" credential:
+   1. Select "Desktop app" as the application type.
+   1. Save the Client ID and Client Secret to the `LOCALEASY_CLIENT_ID` and `LOCALEASY_CLIENT_SECRET` environment variables on your machine. When pulling localizations, localeasy will use these keys.
 
 ### The spreadsheet layout
 
