@@ -116,9 +116,9 @@ There are a few limitations to keep in mind:
 ```
 deno run \
   --allow-net=accounts.google.com,oauth2.googleapis.com,sheets.googleapis.com \
-  --allow-write=~/.localeasy \
-  --allow-read=~/.localeasy \
   --allow-env=HOME,FOLDERID_Profile,LOCALEASY_CLIENT_ID,LOCALEASY_CLIENT_SECRET \
+  --allow-write \
+  --allow-read \
   src/cli.ts
 ```
 
@@ -126,9 +126,9 @@ deno run \
 ```
 deno compile \
   --allow-net=accounts.google.com,oauth2.googleapis.com,sheets.googleapis.com \
-  --allow-write=~/.localeasy \
-  --allow-read=~/.localeasy \
   --allow-env=HOME,FOLDERID_Profile,LOCALEASY_CLIENT_ID,LOCALEASY_CLIENT_SECRET \
+  --allow-write \
+  --allow-read \
   --output ./localeasy \
   ./src/cli.ts
 ```
