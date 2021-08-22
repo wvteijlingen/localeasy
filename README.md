@@ -94,17 +94,29 @@ There are a few limitations to keep in mind:
 
 ## Development
 
-**Running locally**
+**Running**
 ```
-deno run --allow-net --allow-write --allow-read --allow-env src/cli.ts
+deno run \
+  --allow-net=accounts.google.com,oauth2.googleapis.com,sheets.googleapis.com \
+  --allow-write=~/.localeasy \
+  --allow-read=~/.localeasy \
+  --allow-env=HOME,FOLDERID_Profile,LOCALEASY_CLIENT_ID,LOCALEASY_CLIENT_SECRET \
+  src/cli.ts
 ```
 
 **Compiling**
 ```
-deno compile --allow-net --allow-write --allow-read --allow-env --output ./localeasy ./src/cli.ts
+deno compile \
+  --allow-net=accounts.google.com,oauth2.googleapis.com,sheets.googleapis.com \
+  --allow-write=~/.localeasy \
+  --allow-read=~/.localeasy \
+  --allow-env=HOME,FOLDERID_Profile,LOCALEASY_CLIENT_ID,LOCALEASY_CLIENT_SECRET \
+  --output ./localeasy \
+  ./src/cli.ts
 ```
 
 **Testing**
 ```
-TODO
+deno test \
+  --allow-read=./test/fixtures
 ```

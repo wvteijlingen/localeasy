@@ -1,90 +1,48 @@
-import { strict as assert } from "assert"
-import { parseConfigJSON } from "../src/config"
+import {
+  assertEquals,
+  assertThrowsAsync,
+} from "https://deno.land/std@0.105.0/testing/asserts.ts";
+import { Config, loadConfig } from "../src/config.ts";
+import { UserError } from "../src/error.ts";
 
-describe("config file is valid json", () => {
-  it("is does not validate when config is invalid JSON", () => {
-    assert.throws(() => {
-      parseConfigJSON("invalid")
-    })
-  })
-})
+Deno.test("Loading valid config", async () => {
+  const expected: Config = {
+    sheetID: "1234",
+    sheetName: "my-app",
+    platform: "ios",
+    convertPlaceholders: true,
+    stripPlatformPostfixes: true,
+    locales: {
+      "en": "output-en.txt",
+      "nl": "output-nl.txt",
+    },
+  };
 
-describe("parseConfigJSON", () => {
-  it("validates with all required properties", () => {
-    let json = `
-    {
-      "spreadsheetID": "id",
-      "appName": "app",
-      "platform": "ios",
-      "locales": {
-        "nl": "nl.strings"
-      }
-    }
-    `
+  const actual = await loadConfig("./test/fixtures/config-valid.json");
 
-    let actual = parseConfigJSON(json)
+  assertEquals(actual, expected);
+});
 
-    let expected = {
-      spreadsheetID: "id",
-      appName: "app",
-      platform: "ios",
-      locales: {
-        nl: "nl.strings",
-      },
-    }
+Deno.test("Loading invalid config", async () => {
+  await assertThrowsAsync(
+    async () => {
+      await loadConfig("./test/fixtures/config-invalid.json");
+    },
+    UserError,
+    `The config file is invalid:
+- There is no sheetID specified in the config file
+- There is no sheetName specified in the config file
+- The config contains an invalid platform identifier. Valid values are 'ios' or 'android', but found 'undefined'
+- There are no locales specified in the config file`,
+  );
+});
 
-    assert.equal(actual.spreadsheetID, expected.spreadsheetID)
-    assert.equal(actual.appName, expected.appName)
-    assert.equal(actual.platform, expected.platform)
-    assert.equal(actual.locales["nl"], expected.locales["nl"])
-  })
-
-  it("does not validate if spreadsheetID is missing", () => {
-    let json = `
-    {
-      "appName": "app",
-      "platform": "ios",
-      "locales": {
-        "nl": "nl.strings"
-      }
-    }
-    `
-
-    assert.throws(() => {
-      parseConfigJSON(json)
-    })
-  })
-
-  it("does not validate if appName is missing", () => {
-    let json = `
-    {
-      "spreadsheetID": "id",
-      "platform": "ios",
-      "locales": {
-        "nl": "nl.strings"
-      }
-    }
-    `
-
-    assert.throws(() => {
-      parseConfigJSON(json)
-    })
-  })
-
-  it("does not validate if platform is not ios or android", () => {
-    let json = `
-    {
-      "spreadsheetID": "id",
-      "appName": "app",
-      "platform": "invalid",
-      "locales": {
-        "nl": "nl.strings"
-      }
-    }
-    `
-
-    assert.throws(() => {
-      parseConfigJSON(json)
-    })
-  })
-})
+Deno.test("Loading invalid JSON", async () => {
+  await assertThrowsAsync(
+    async () => {
+      await loadConfig("./test/fixtures/config-invalid-json.json");
+    },
+    UserError,
+    "The config file is not a valid json file",
+  );
+});

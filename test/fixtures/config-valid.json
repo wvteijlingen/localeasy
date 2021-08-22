@@ -1,5 +1,9 @@
 {
-  "app_name": "Test",
+  "sheetID": "1234",
+  "sheetName": "my-app",
   "platform": "ios",
-  "output_path": "./path/to/output.strings"
+  "locales": {
+    "en": "output-en.txt",
+    "nl": "output-nl.txt"
+  }
 }
