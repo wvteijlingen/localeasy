@@ -1,8 +1,8 @@
-# Localeasy: Effortless localization using Google Sheets
+# Localeasy: Effortless app localization using Google Sheets
 
 Localeasy uses Google Sheets to store and manage translations. This has many benefits such as easy access management, change tracking, no limits on contributors, and it's free of charge.
 
-Localeasy talks to Google Sheets API, downloads translations, and formats them to iOS and Android-specific formats.
+Localeasy talks to the Google Sheets API, downloads translations, and formats them to iOS and Android-specific formats.
 
 - [Installation](#installation)
 - [Project setup](#project-setup)
@@ -66,10 +66,14 @@ The project configuration file (localeasy.json) contains several keys that need 
 
 ## Set up your sheet
 
-For Localeasy to access your sheet, you need to configure some permissions first. There are two ways to do this. The first options is recommended because it is the simplest possible setup.
+For Localeasy to access your sheet, you need to configure some permissions first. There are two ways to do this. The first option is recommended because it is the simplest possible setup.
 
-1. Create a public link that is (at least) viewable. This is the easiest way, and does not require any further authentication steps. However, anyone with the link could potentially view the sheet. To use this, create a public link for your sheet and configure the `localeasy.json` file to use "public" authentication.
-1. Give access to individual users and use OAuth to authenticate them. This is more complex, and requires you to configure a project and OAuth application in the Google Cloud Platform console. See [Individual user authentication](#individual-user-authentication) for instructions.
+**Simple way**
+
+Create a public link that is viewable by everyone. Localeasy will use this link to download translations. This is the easiest way and does not require any further authentication. To use this, create a public link for your sheet and configure the `localeasy.json` file to use `public` authentication.
+
+**Complex way**
+If you don't want to use a public link for your sheet, you can give access to individual users and use OAuth to authenticate them. This is more complex, and requires you to configure a project and OAuth application in the Google Cloud Platform console. See [Advanced/Individual user authentication](#individual-user-authentication) for instructions.
 
 ### Column layout
 

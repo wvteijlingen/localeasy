@@ -24,3 +24,18 @@ export type Formatter = (
 ) => string;
 
 export type Platform = "ios" | "android";
+
+// export interface Translation {
+//   locale: string;
+//   key: string;
+//   comment?: string;
+//   translations: {
+//     base: string;
+//     zero?: string;
+//     one?: string;
+//     two?: string;
+//     few?: string;
+//     many?: string;
+//     other?: string;
+//   };
+// }
