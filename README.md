@@ -73,6 +73,7 @@ For Localeasy to access your sheet, you need to configure some permissions first
 Create a public link that is viewable by everyone. Localeasy will use this link to download translations. This is the easiest way and does not require any further authentication. To use this, create a public link for your sheet and configure the `localeasy.json` file to use `public` authentication.
 
 **Complex way**
+
 If you don't want to use a public link for your sheet, you can give access to individual users and use OAuth to authenticate them. This is more complex, and requires you to configure a project and OAuth application in the Google Cloud Platform console. See [Advanced/Individual user authentication](#individual-user-authentication) for instructions.
 
 ### Column layout
