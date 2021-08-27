@@ -10,7 +10,7 @@ export interface Config {
   sheetTab: string;
   platform: Platform;
   convertPlaceholders: boolean;
-  stripPlatformPostfixes: boolean;
+  stripPlatformSuffixes: boolean;
   locales: { [key: string]: string };
 }
 
@@ -57,7 +57,7 @@ function parseConfigJSON(json: string): Config {
     platform,
     locales,
     convertPlaceholders = true,
-    stripPlatformPostfixes = true,
+    stripPlatformSuffixes = true,
   } = config;
 
   if (
@@ -100,6 +100,6 @@ function parseConfigJSON(json: string): Config {
     platform,
     locales,
     convertPlaceholders,
-    stripPlatformPostfixes,
+    stripPlatformSuffixes,
   };
 }

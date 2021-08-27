@@ -15,7 +15,7 @@ export interface MultiTranslation {
 
 export type FormattingOptions = {
   convertPlaceholders: boolean;
-  stripPlatformPostfixes: boolean;
+  stripPlatformSuffixes: boolean;
 };
 
 export type Formatter = (

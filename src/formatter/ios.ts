@@ -18,7 +18,7 @@ function formatTranslation(
 
   if (key.endsWith("_android")) {
     return null;
-  } else if (options.stripPlatformPostfixes && key.endsWith("_ios")) {
+  } else if (options.stripPlatformSuffixes && key.endsWith("_ios")) {
     isPlatformSpecific = true;
     key = key.slice(0, -4);
   }

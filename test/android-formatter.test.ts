@@ -4,7 +4,7 @@ import { format } from "../src/formatter/android.ts";
 
 const defaultOptions = {
   convertPlaceholders: true,
-  stripPlatformPostfixes: true,
+  stripPlatformSuffixes: true,
 };
 
 Deno.test("should format text as Android XML", () => {

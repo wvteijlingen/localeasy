@@ -9,7 +9,7 @@ Deno.test("Loading valid config", async () => {
     sheetTab: "my-app",
     platform: "ios",
     convertPlaceholders: true,
-    stripPlatformPostfixes: true,
+    stripPlatformSuffixes: true,
     locales: {
       "en": "output-en.txt",
       "nl": "output-nl.txt",
