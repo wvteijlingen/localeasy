@@ -1,5 +1,5 @@
 <a href="https://codecov.io/gh/wvteijlingen/localize-xibs">
-  <img src="./localeasy.png" />
+  <img src="./localeasy.png" width="150" height="150"/>
 </a>
 
 # Localeasy - Effortless app localization
