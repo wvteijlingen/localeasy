@@ -1,8 +1,14 @@
-# Localeasy: Effortless app localization using Google Sheets
+<a href="https://codecov.io/gh/wvteijlingen/localize-xibs">
+  <img src="./localeasy.png" />
+</a>
 
-Localeasy uses Google Sheets to store and manage translations. This has many benefits such as easy access management, change tracking, no limits on contributors, and it's free of charge.
+# Localeasy - Effortless app localization
+
+With Localeasy you can use Google Sheets to store and manage your app translations. This has many benefits such as easy user management, change tracking, comments, no limits on contributors, and it's free of charge.
 
 Localeasy talks to the Google Sheets API, downloads translations, and formats them to iOS and Android-specific formats.
+
+---
 
 - [Installation](#installation)
 - [Project setup](#project-setup)
@@ -77,6 +83,10 @@ Create a public link that is viewable by everyone. Localeasy will use this link 
 If you don't want to use a public link for your sheet, you can give access to individual users and use OAuth to authenticate them. This is more complex, and requires you to configure a project and OAuth application in the Google Cloud Platform console. See [Advanced/Individual user authentication](#individual-user-authentication) for instructions.
 
 ### Column layout
+
+If your `localeasy.json` is set up, you can use the `localeasy generate-sheet --output template.csv` command to create a csv template file. You can import this file into Google Sheets to get a premade sheet with the correct columns.
+
+**Specification**
 
 The first row of your spreadsheet should contain column headers that localeasy uses to identify each column. The order of the columns does not matter, as long as the following columns are present:
 
