@@ -78,13 +78,13 @@ If you don't want to use a public link for your sheet, you can give access to in
 
 ### Column layout
 
-The first row of your spreadsheet should contain column headers that localeasy uses to identify each column. The order of the columns does not matter. Example:
+The first row of your spreadsheet should contain column headers that localeasy uses to identify each column. The order of the columns does not matter, as long as the following columns are present:
 
 - `key`: The column that contains the key of a translation entry
 - `comment`: The column that contains an optional comment for the entry. This column can be omitted.
 - `<locale1>`: The column that contains the translated text for the entry. The name of this column must correspond to a locale configured in the `localeasy.json` config file. You can have as many locale columns as you need.
-- `<locale2>`: Second locale.
-- `<locale3>`: Third locale, etc.
+- `<locale2>`: Second locale, if you have multiple locales.
+- `<locale3>`: Third locale, if you have multiple locales, etc.
 
 **Example**
 
