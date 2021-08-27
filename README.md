@@ -68,7 +68,7 @@ The project configuration file (localeasy.json) contains several keys that need 
 
 For Localeasy to access your sheet, you need to configure some permissions first. There are two ways to do this. The first option is recommended because it is the simplest possible setup.
 
-**Simple way**
+**Simple way (recommended)**
 
 Create a public link that is viewable by everyone. Localeasy will use this link to download translations. This is the easiest way and does not require any further authentication. To use this, create a public link for your sheet and configure the `localeasy.json` file to use `public` authentication.
 
