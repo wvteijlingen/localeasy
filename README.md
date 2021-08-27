@@ -9,15 +9,15 @@ Localeasy talks to the Google Sheets API, downloads translations, and formats th
 ---
 
 - [Installation](#installation)
-- [Project setup](#project-setup)
+- [Setup](#setup)
+  - [Project configuration](#project-configuration)
+  - [Sheet configuration](#sheet-configuration)
+    - [Column layout](#column-layout)
 - [Usage](#usage)
-- [Project configuration](#project-configuration)
-- [Set up your sheet](#set-up-your-sheet)
-  - [Column layout](#column-layout)
 - [Advanced](#advanced)
   - [Platform specific strings](#platform-specific-strings)
   - [Automatic placeholder conversion](#automatic-placeholder-conversion)
-  - [Individual user authentication](#individual-user-authentication)
+  - [User authentication through OAuth](#user-authentication-through-oauth)
 - [Development](#development)
 
 ## Installation
@@ -32,16 +32,15 @@ brew install localeasy
 
 You can also just download and run the latest binary.
 
-## Project setup
+## Setup
 
-1. Make sure your Google Sheet is set up beforehand. See [Set up your sheet](#set-up-your-sheet).
-1. In your project folder, run `localeasy init` to intialize your project configuration. Add the generated `localeasy.json` file to source control.
+1. Make sure your Google Sheet is set up beforehand. See [Sheet configuration](#sheet-configuration).
+1. In your project folder, run `localeasy init` to create a `localeasy.json` configuration file.
 1. Edit the created `localeasy.json` file. See [Project configuration](#project-configuration-localeasyjson-).
-1. Run `localeasy pull` to pull the latest translations. The first time you need to grant access to the spreadsheet. Simply follow the prompts in your terminal.
 
 ## Usage
 
-Simply run `localeasy pull` to pull the latest translations and generate updated localization files.
+Run `localeasy pull` to pull the latest translations and generate updated localization files.
 
 ## Project configuration
 
@@ -68,37 +67,31 @@ The project configuration file (localeasy.json) contains several keys that need 
 }
 ```
 
-## Set up your sheet
+## Sheet configuration
 
-For Localeasy to access your sheet, you need to configure some permissions first. There are two ways to do this. The first option is recommended because it is the simplest possible setup.
+For Localeasy to access your sheet, you need to configure some permissions first. There are two ways to do this. Using a public link is recommended because it is the simplest possible setup.
 
-**Simple way (recommended)**
+**Using a public read only link (recommended)**
 
-Create a public link that is viewable by everyone. Localeasy will use this link to download translations. This is the easiest way and does not require any further authentication. To use this, create a public link for your sheet and configure the `localeasy.json` file to use `public` authentication.
+Create a public link that is viewable by everyone. Localeasy will use this link to download translations. This is the easiest way and does not require any further authentication. To use this, create a public link for your sheet and set the `authentication` field in `localeasy.json` to `public`.
 
-**Complex way**
+**Using OAuth**
 
-If you don't want to use a public link for your sheet, you can give access to individual users and use OAuth to authenticate them. This is more complex, and requires you to configure a project and OAuth application in the Google Cloud Platform console. See [Advanced/Individual user authentication](#individual-user-authentication) for instructions.
+If you don't want to use a public link for your sheet, you can give access to individual users via OAuth. This is more complex, and requires you to configure a project in the Google Cloud Platform console. See [Advanced/User authentication through OAuth](#user-authentication-through-oauth).
 
 ### Column layout
 
-If your `localeasy.json` is set up, you can use the `localeasy generate-sheet --output template.csv` command to create a csv template file. You can import this file into Google Sheets to get a premade sheet with the correct columns.
-
-**Specification**
-
 The first row of your spreadsheet should contain column headers that localeasy uses to identify each column. The order of the columns does not matter, as long as the following columns are present:
 
-- `key`: The column that contains the key of a translation entry
+- `key`: The column that contains the key of a translation entry.
 - `comment`: The column that contains an optional comment for the entry. This column can be omitted.
-- `<locale1>`: The column that contains the translated text for the entry. The name of this column must correspond to a locale configured in the `localeasy.json` config file. You can have as many locale columns as you need.
-- `<locale2>`: Second locale, if you have multiple locales.
-- `<locale3>`: Third locale, if you have multiple locales, etc.
+- `<locale1...>`: One or mulitple columns that contains the translated text for the entr. The header of this column must correspond to a locale configured in the `localeasy.json` config file. You can have as many locale columns as you need.
 
 **Example**
 
 ```
 +------+-------+--------+------------------+
-| key  | en    | nl     |     comment      |
+| key  | en    | nl     | comment          |
 +------+-------+--------+------------------+
 | key1 | Value | Waarde | Optional comment |
 | key2 | Value | Waarde | Optional comment |
@@ -109,9 +102,7 @@ The first row of your spreadsheet should contain column headers that localeasy u
 
 ### Platform specific strings
 
-If you want to provide a custom translation per platform, you can do so by appending the platform name to the translation key. Entries that are not for the active platform will be ignored, and the key will simply show up as `store_title` in the generated files.
-
-For example:
+If you want to provide a custom translation per platform, you can do so by appending the platform name to the translation key. Entries that are not for the active platform will be ignored, and the platform suffix will stripped in the generated files. For example:
 
 ```
 store_title_ios: Find us on the App Store!
@@ -120,7 +111,7 @@ store_title_android: Find us on the Play Store!
 
 ### Automatic placeholder conversion
 
-Localasy can automatically convert placeholders to each platform specific format. This means you don't have to create platform specific strings if you need to do interpolation.
+Localeasy will automatically convert placeholders to each platform specific format. This means you don't have to create platform specific strings if you need to do interpolation.
 
 For example: The string `Welcome %s!` will be formatted as `Welcome %s!` for Android, and as `Welcome %@!` for iOS.
 
@@ -129,7 +120,7 @@ There are a few limitations to keep in mind:
 - Currently the only supported conversion is from `%s` to `%@` for iOS.
 - The conversion will not be applied to platform specific strings, localeasy assumes that those have been converted manually already.
 
-### Individual user authentication
+### User authentication through OAuth
 
 The summary is that you want to create an OAuth application configured with the `./auth/spreadsheets.readonly` scope.
 
