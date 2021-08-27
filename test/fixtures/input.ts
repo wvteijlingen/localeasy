@@ -30,6 +30,12 @@ export const input = [
     locale: "en",
   },
   {
+    key: "with_placeholder_escaped",
+    comment: "",
+    translation: "Translation %%s with escaped placeholder",
+    locale: "en",
+  },
+  {
     key: "with_placeholder_only_ios",
     comment: "",
     translation: "Translation %s with placeholder only ios",

@@ -21,6 +21,8 @@ Deno.test("should format text as iOS .strings", () => {
 
 "with_placeholder" = "Translation %@ with placeholder";
 
+"with_placeholder_escaped" = "Translation %%s with escaped placeholder";
+
 "with_placeholder_only" = "Translation %s with placeholder only ios";
 
 "with_quotes" = "With \\"quotes\\"";

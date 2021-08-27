@@ -16,6 +16,7 @@ Deno.test("should format text as Android XML", () => {
   <string name="with_escaped_newline">With escaped \\n newline</string>
   <string name="with_newline">With \\n newline</string>
   <string name="with_placeholder">Translation %s with placeholder</string>
+  <string name="with_placeholder_escaped">Translation %%s with escaped placeholder</string>
   <string name="with_quotes">With &quot;quotes&quot;</string>
   <string name="without_comment">Translation without comment</string>
 </resources>`;

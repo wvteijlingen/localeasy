@@ -27,7 +27,7 @@ function formatTranslation(
   let normalizedTranslation = escapeSpecialCharacters(translation);
 
   if (options.convertPlaceholders && !isPlatformSpecific) {
-    normalizedTranslation = convertToPlatformPlaceholders(
+    normalizedTranslation = convertPlaceholders(
       normalizedTranslation,
     );
   }
@@ -44,6 +44,6 @@ function escapeSpecialCharacters(input: string): string {
   return input.replace(/\"/g, '\\"').replace(/\n/g, "\\n");
 }
 
-function convertToPlatformPlaceholders(input: string): string {
-  return input.replace(/%s/g, "%@");
+function convertPlaceholders(input: string): string {
+  return input.replace(/([^%])%s/g, (_, capture) => `${capture}%@`);
 }
