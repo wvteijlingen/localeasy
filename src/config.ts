@@ -2,9 +2,12 @@ import { fileExists } from "./utils/file.ts";
 import { Platform } from "./interfaces.ts";
 import { UserError } from "./error.ts";
 
+export type AuthenticationStrategy = "public" | "user";
+
 export interface Config {
+  authentication: AuthenticationStrategy;
   sheetID: string;
-  sheetName: string;
+  sheetTab: string;
   platform: Platform;
   convertPlaceholders: boolean;
   stripPlatformPostfixes: boolean;
@@ -23,8 +26,9 @@ export async function writeEmptyConfigFile(filePath: string) {
 
   const configTemplate = `
 {
+  "authentication": "public|user",
   "sheetID": "ID of Google Sheet spreadsheet",
-  "sheetName": "my-app",
+  "sheetTab": "Name or ID of tab in spreadsheet",
   "platform": "ios|android",
   "locales": {
     "en": "path/to/outputfile",
@@ -47,25 +51,35 @@ function parseConfigJSON(json: string): Config {
   const errors: string[] = [];
 
   const {
+    authentication,
     sheetID,
-    sheetName,
+    sheetTab,
     platform,
     locales,
     convertPlaceholders = true,
     stripPlatformPostfixes = true,
   } = config;
 
+  if (
+    authentication !== "public" &&
+    authentication !== "user"
+  ) {
+    errors.push(
+      `The config file contains an invalid authentication strategy. Valid values are 'public' or 'user'. Found '${authentication}'`,
+    );
+  }
+
   if (!sheetID) {
     errors.push(`There is no sheetID specified in the config file`);
   }
 
-  if (!sheetName) {
-    errors.push(`There is no sheetName specified in the config file`);
+  if (!sheetTab) {
+    errors.push(`There is no sheetTab specified in the config file`);
   }
 
   if (platform !== "ios" && platform !== "android") {
     errors.push(
-      `The config contains an invalid platform identifier. Valid values are 'ios' or 'android', but found '${platform}'`,
+      `The config contains an invalid platform identifier. Valid values are 'ios' or 'android'. Found '${platform}'`,
     );
   }
 
@@ -80,8 +94,9 @@ function parseConfigJSON(json: string): Config {
   }
 
   return {
+    authentication,
     sheetID,
-    sheetName,
+    sheetTab,
     platform,
     locales,
     convertPlaceholders,

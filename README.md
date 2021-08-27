@@ -8,10 +8,12 @@ Localeasy talks to Google Sheets API, downloads translations, and formats them t
 - [Project setup](#project-setup)
 - [Usage](#usage)
 - [Project configuration](#project-configuration)
-- [Writing localized strings in Google Sheets](#writing-localized-strings-in-google-sheets)
-  - [Configuring access to the sheet](#configuring-access-to-the-sheet)
+- [Set up your sheet](#set-up-your-sheet)
+  - [Column layout](#column-layout)
+- [Advanced](#advanced)
   - [Platform specific strings](#platform-specific-strings)
   - [Automatic placeholder conversion](#automatic-placeholder-conversion)
+  - [Individual user authentication](#individual-user-authentication)
 - [Development](#development)
 
 ## Installation
@@ -28,7 +30,7 @@ You can also just download and run the latest binary.
 
 ## Project setup
 
-1. Make sure your Google Sheet is set up beforehand. See [Configuring access to the sheet](#configuring-access-to-the-sheet).
+1. Make sure your Google Sheet is set up beforehand. See [Set up your sheet](#set-up-your-sheet).
 1. In your project folder, run `localeasy init` to intialize your project configuration. Add the generated `localeasy.json` file to source control.
 1. Edit the created `localeasy.json` file. See [Project configuration](#project-configuration-localeasyjson-).
 1. Run `localeasy pull` to pull the latest translations. The first time you need to grant access to the spreadsheet. Simply follow the prompts in your terminal.
@@ -41,8 +43,9 @@ Simply run `localeasy pull` to pull the latest translations and generate updated
 
 The project configuration file (localeasy.json) contains several keys that need to be configured:
 
+- `authentication`: Set to `public` if you have a public viewable link for your sheet. Otherwise set to `user`.
 - `sheetID`: The ID of the Google Sheet that contains the translations. You can find this in the URL of the spreadsheet.
-- `sheetName`: The name of the sheet that contains your translations. You can find this in the small "tabs" on the bottom of your spreadsheet.
+- `sheetTab`: If authentication is `public`, this is the `gid` of the tab on your sheet. You can find this at the end of the URL of the spreadsheet. If authentication is `user`, this is the name of the tab on your sheet.
 - `platform`: The platform of your project. Either `android` or `ios`.
 - `locales`: An object containing all locales that you want to support. The keys of this object correspond to colum headers in your spreadsheet. The values correspond to the filepaths where the files should be generated.
 
@@ -50,8 +53,9 @@ The project configuration file (localeasy.json) contains several keys that need 
 
 ```json
 {
+  "authentication": "public",
   "sheetID": "ABCDEFG1234506789",
-  "sheetName": "my-sheet",
+  "sheetTab": "0",
   "platform": "ios",
   "locales": {
     "nl": "Supporting Files/Shared/nl.lproj/Localizable.strings",
@@ -60,33 +64,35 @@ The project configuration file (localeasy.json) contains several keys that need 
 }
 ```
 
-## Writing translations in Google Sheets
+## Set up your sheet
 
-## Configuring access to the sheet
+For Localeasy to access your sheet, you need to configure some permissions first. There are two ways to do this. The first options is recommended because it is the simplest possible setup.
 
-For Localeasy to access your sheet, you need to configure some permissions first. The summary is that you want to create an OAuth application configured with the `./auth/spreadsheets.readonly` scope.
+1. Create a public link that is (at least) viewable. This is the easiest way, and does not require any further authentication steps. However, anyone with the link could potentially view the sheet. To use this, create a public link for your sheet and configure the `localeasy.json` file to use "public" authentication.
+1. Give access to individual users and use OAuth to authenticate them. This is more complex, and requires you to configure a project and OAuth application in the Google Cloud Platform console. See [Individual user authentication](#individual-user-authentication) for instructions.
 
-Follow these steps to configure the OAuth platform. Note, the steps might change in the future, this is just a guideline:
+### Column layout
 
-1. In the [Google Cloud Platform console](https://console.developers.google.com), create a new project that will contain your API access. You can also reuse an existing project if you want.
-1. Navigate to the [API dashboard](https://console.cloud.google.com/apis/dashboard) and click "Enable APIs and Services".
-1. Add the [Google Sheets API](https://console.cloud.google.com/apis/library/sheets.googleapis.com)
-1. Navigate to the [OAuth consent screen dashboard](https://console.cloud.google.com/apis/credentials/consent) and configure the consent screen:
-   1. Add the `./auth/spreadsheets.readonly` scope.
-   1. Add optional test users. If you want to
-1. Navigate to the [credentials](https://console.cloud.google.com/apis/credentials) dashboard and create an "OAuth client ID" credential:
-   1. Select "Desktop app" as the application type.
-   1. Save the Client ID and Client Secret to the `LOCALEASY_CLIENT_ID` and `LOCALEASY_CLIENT_SECRET` environment variables on your machine. When pulling localizations, localeasy will use these keys.
-
-### The spreadsheet layout
-
-The first row of your spreadsheet should contain column headers that localeasy uses to identify each column. The order of the columns does not matter:
+The first row of your spreadsheet should contain column headers that localeasy uses to identify each column. The order of the columns does not matter. Example:
 
 - `key`: The column that contains the key of a translation entry
 - `comment`: The column that contains an optional comment for the entry. This column can be omitted.
 - `<locale1>`: The column that contains the translated text for the entry. The name of this column must correspond to a locale configured in the `localeasy.json` config file. You can have as many locale columns as you need.
 - `<locale2>`: Second locale.
 - `<locale3>`: Third locale, etc.
+
+**Example**
+
+```
++------+-------+--------+------------------+
+| key  | en    | nl     |     comment      |
++------+-------+--------+------------------+
+| key1 | Value | Waarde | Optional comment |
+| key2 | Value | Waarde | Optional comment |
++------+-------+--------+------------------+
+```
+
+## Advanced
 
 ### Platform specific strings
 
@@ -110,13 +116,30 @@ There are a few limitations to keep in mind:
 - Currently the only supported conversion is from `%s` to `%@` for iOS.
 - The conversion will not be applied to platform specific strings, localeasy assumes that those have been converted manually already.
 
+### Individual user authentication
+
+The summary is that you want to create an OAuth application configured with the `./auth/spreadsheets.readonly` scope.
+
+Follow these steps to configure the OAuth platform. Note, the steps might change in the future, this is just a guideline:
+
+1. In the [Google Cloud Platform console](https://console.developers.google.com), create a new project that will contain your API access. You can also reuse an existing project if you want.
+1. Navigate to the [API dashboard](https://console.cloud.google.com/apis/dashboard) and click "Enable APIs and Services".
+1. Add the [Google Sheets API](https://console.cloud.google.com/apis/library/sheets.googleapis.com)
+1. Navigate to the [OAuth consent screen dashboard](https://console.cloud.google.com/apis/credentials/consent) and configure the consent screen:
+   1. Add the `./auth/spreadsheets.readonly` scope.
+   1. Add optional test users. If you want to
+1. Navigate to the [credentials](https://console.cloud.google.com/apis/credentials) dashboard and create an "OAuth client ID" credential:
+   1. Select "Desktop app" as the application type.
+   1. Save the Client ID and Client Secret to the `LOCALEASY_CLIENT_ID` and `LOCALEASY_CLIENT_SECRET` environment variables on your machine. When pulling localizations, localeasy will use these keys.
+
+
 ## Development
 
 **Running**
 ```
 deno run \
-  --allow-net=accounts.google.com,oauth2.googleapis.com,sheets.googleapis.com \
   --allow-env=HOME,FOLDERID_Profile,LOCALEASY_CLIENT_ID,LOCALEASY_CLIENT_SECRET \
+  --allow-net \
   --allow-write \
   --allow-read \
   src/cli.ts
@@ -125,8 +148,8 @@ deno run \
 **Compiling**
 ```
 deno compile \
-  --allow-net=accounts.google.com,oauth2.googleapis.com,sheets.googleapis.com \
   --allow-env=HOME,FOLDERID_Profile,LOCALEASY_CLIENT_ID,LOCALEASY_CLIENT_SECRET \
+  --allow-net \
   --allow-write \
   --allow-read \
   --output ./localeasy \

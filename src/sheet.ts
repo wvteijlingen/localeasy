@@ -89,4 +89,18 @@ export class Sheet {
 
     return `${cell}`;
   }
+
+  private validate(locales: string[]) {
+    const message =
+      "The sheet seems to be invalid. Make sure the columns are set up as follows";
+
+    const example = `
++------+-------+--------+------------------+
+| key  | en    | nl     |     comment      |
++------+-------+--------+------------------+
+| key1 | Value | Waarde | Optional comment |
+| key2 | Value | Waarde | Optional comment |
++------+-------+--------+------------------+
+`;
+  }
 }

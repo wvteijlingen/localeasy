@@ -1,15 +1,24 @@
 import { Config } from "../config.ts";
 import { format } from "../formatter/index.ts";
-import { getSheet } from "../google/get-sheet.ts";
+import { Sheet } from "../sheet.ts";
+import { getSheet as getSheetApi } from "../google/sheets-api.ts";
+import { getSheet as getSheetCsv } from "../google/sheets-csv.ts";
 import { logInfo, logPositive } from "../utils/log.ts";
 
 export async function pull(config: Config) {
   logPositive(
-    `Pulling translations for "${config.sheetName}" (format: ${config.platform}).`,
+    `Pulling translations for ${config.platform}.`,
   );
 
   const locales = Object.keys(config.locales);
-  const sheet = await getSheet(config.sheetID, config.sheetName);
+
+  let sheet: Sheet;
+  if (config.authentication == "public") {
+    sheet = await getSheetCsv(config.sheetID, config.sheetTab);
+  } else {
+    sheet = await getSheetApi(config.sheetID, config.sheetTab);
+  }
+
   const translations = sheet.translations(locales);
 
   for (const [locale, outputPath] of Object.entries(config.locales)) {

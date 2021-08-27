@@ -24,8 +24,11 @@ yargs(Deno.args)
       });
     },
   )
-  .command("authenticate", "Reauthenticate with Google Sheets.", async () => {
-    await authenticate();
+  .command("authenticate", "Reauthenticate with Google Sheets.", () => {
+    catchingUserError(async () => {
+      const config = await loadConfig("./localeasy.json");
+      await authenticate(config);
+    });
   })
   .strictCommands()
   .demandCommand()

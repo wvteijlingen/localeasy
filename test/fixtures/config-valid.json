@@ -1,6 +1,7 @@
 {
+  "authentication": "public",
   "sheetID": "1234",
-  "sheetName": "my-app",
+  "sheetTab": "my-app",
   "platform": "ios",
   "locales": {
     "en": "output-en.txt",
