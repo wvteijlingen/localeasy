@@ -7,7 +7,7 @@ import { logInfo, logPositive } from "../utils/log.ts";
 
 export async function pull(config: Config) {
   logPositive(
-    `Pulling translations for ${config.platform}.`,
+    `Pulling translations for ${config.format}.`,
   );
 
   const locales = Object.keys(config.locales);
@@ -31,7 +31,7 @@ export async function pull(config: Config) {
       comment: translation.comment,
     }));
 
-    const formattedOutput = format(entries, config.platform, config);
+    const formattedOutput = format(entries, config.format, config);
 
     await Deno.writeTextFile(outputPath, formattedOutput);
 

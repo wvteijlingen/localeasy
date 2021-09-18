@@ -5,9 +5,9 @@ import { UserError } from "../src/error.ts";
 Deno.test("Loading valid config", async () => {
   const expected: Config = {
     authentication: "public",
-    sheetID: "1234",
-    sheetTab: "my-app",
-    platform: "ios",
+    sheetID: "123",
+    sheetTab: "456",
+    format: "ios-strings",
     convertPlaceholders: true,
     stripPlatformSuffixes: true,
     locales: {
@@ -22,17 +22,20 @@ Deno.test("Loading valid config", async () => {
 });
 
 Deno.test("Loading invalid config", async () => {
+  const expectedErrorType = UserError;
+
+  const expectedErrorMessage = `The config file is invalid:
+- The config file contains an invalid authentication strategy. Valid values are 'public' or 'user'. Found 'undefined'
+- The config file contains an invalid or empty sheet URL
+- The config contains an invalid format identifier. Valid values are 'ios-strings' or 'android-xml'. Found 'undefined'
+- There are no locales specified in the config file`;
+
   await assertThrowsAsync(
     async () => {
       await loadConfig("./test/fixtures/config-invalid.json");
     },
-    UserError,
-    `The config file is invalid:
-- The config file contains an invalid authentication strategy. Valid values are 'public' or 'user'. Found 'undefined'
-- There is no sheetID specified in the config file
-- There is no sheetTab specified in the config file
-- The config contains an invalid platform identifier. Valid values are 'ios' or 'android'. Found 'undefined'
-- There are no locales specified in the config file`,
+    expectedErrorType,
+    expectedErrorMessage,
   );
 });
 

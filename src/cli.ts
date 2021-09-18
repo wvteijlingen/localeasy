@@ -1,5 +1,5 @@
 import { yargs } from "../deps.ts";
-import { authenticate, init, pull } from "./commands/index.ts";
+import { authenticate, generateSheet, init, pull } from "./commands/index.ts";
 import { loadConfig } from "./config.ts";
 import { catchingUserError } from "./error.ts";
 
@@ -30,6 +30,23 @@ yargs(Deno.args)
       await authenticate(config);
     });
   })
+  .command(
+    "generate-sheet",
+    "Generate a csv template to import in Google Sheets.",
+    (yargs: any) => {
+      yargs.option("output", {
+        describe: "Path of the csv file to output",
+        demandOption: true,
+        type: "string",
+      });
+    },
+    (args: any) => {
+      catchingUserError(async () => {
+        const config = await loadConfig("./localeasy.json");
+        await generateSheet(config, args.output);
+      });
+    },
+  )
   .strictCommands()
   .demandCommand()
   .help()

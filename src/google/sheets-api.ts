@@ -4,14 +4,14 @@ import { logInfo } from "../utils/log.ts";
 import { getCredentials, refreshCredentials } from "./authentication.ts";
 
 export async function getSheet(
-  id: string,
-  name: string,
+  sheetID: string,
+  sheetTab: string,
   _shouldRefreshCredentials = true,
 ): Promise<Sheet> {
   const credentials = await getCredentials();
 
   const response = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${id}?includeGridData=true&ranges=${name}`,
+    `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}?includeGridData=true`,
     {
       headers: { "Authorization": `Bearer ${credentials.access_token}` },
     },
@@ -23,7 +23,7 @@ export async function getSheet(
   ) {
     logInfo("Access token expired, refreshing credentials...");
     await refreshCredentials(credentials);
-    return await getSheet(id, name, false);
+    return await getSheet(sheetID, sheetTab, false);
   }
 
   if (response.status !== 200) {
@@ -32,14 +32,37 @@ export async function getSheet(
     );
   }
 
-  const json = await response.json();
-  const rows = json.sheets[0].data[0].rowData;
+  const json = await response.json() as SheetResponse;
+  const sheet = json.sheets.find((e) =>
+    e.properties.sheetId.toString() == sheetTab
+  );
 
-  // deno-lint-ignore no-explicit-any
-  const cells = rows.map((row: any) => {
-    // deno-lint-ignore no-explicit-any
-    return row.values.map((cell: any) => cell.formattedValue);
+  if (!sheet) {
+    throw new UserError(
+      `Could not find sheet with gid ${sheetTab}`,
+    );
+  }
+
+  const rows = sheet.data[0]?.rowData;
+
+  const cells = rows.map((row) => {
+    return row.values.map((cell) => cell.formattedValue);
   });
 
   return new Sheet(cells);
+}
+
+interface SheetResponse {
+  sheets: Array<{
+    properties: {
+      sheetId: string;
+    };
+    data: Array<{
+      rowData: Array<{
+        values: Array<{
+          formattedValue: string;
+        }>;
+      }>;
+    }>;
+  }>;
 }

@@ -5,9 +5,9 @@ import { getCredentials } from "../google/authentication.ts";
 import { fileExists } from "../utils/file.ts";
 
 export async function authenticate(config: Config) {
-  if (config.authentication !== "user") {
+  if (config.authentication !== "oauth") {
     throw new UserError(
-      "Authentication is only required when using the 'user' authentication strategy.",
+      "Authentication is only required when using the 'oauth' authentication strategy.",
     );
   }
 

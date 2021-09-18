@@ -4,7 +4,7 @@
 
 With Localeasy you can use Google Sheets to store and manage your app translations. This has many benefits such as easy user management, change tracking, comments, no limits on contributors, and it's free of charge.
 
-Localeasy talks to the Google Sheets API, downloads translations, and formats them to iOS and Android-specific formats.
+Localeasy talks to the Google Sheets API, downloads translations, and formats them to iOS .strings, or Android .xml files.
 
 ---
 
@@ -46,20 +46,16 @@ Run `localeasy pull` to pull the latest translations and generate updated locali
 
 The project configuration file (localeasy.json) contains several keys that need to be configured:
 
-- `authentication`: Set to `public` if you have a public viewable link for your sheet. Otherwise set to `user`.
-- `sheetID`: The ID of the Google Sheet that contains the translations. You can find this in the URL of the spreadsheet.
-- `sheetTab`: If authentication is `public`, this is the `gid` of the tab on your sheet. You can find this at the end of the URL of the spreadsheet. If authentication is `user`, this is the name of the tab on your sheet.
-- `platform`: The platform of your project. Either `android` or `ios`.
+- `sheet`: The URL of the Google Sheet that contains the translations. (Make sure you are on the correct sheet tab when you copy the URL).
+- `format`: The output format that localeasy should use. Either `android-xml` or `ios-strings`.
 - `locales`: An object containing all locales that you want to support. The keys of this object correspond to colum headers in your spreadsheet. The values correspond to the filepaths where the files should be generated.
 
 ### Example
 
 ```json
 {
-  "authentication": "public",
-  "sheetID": "ABCDEFG1234506789",
-  "sheetTab": "0",
-  "platform": "ios",
+  "sheet": "https://docs.google.com/spreadsheets/d/123/edit#gid=456",
+  "format": "ios-strings",
   "locales": {
     "nl": "Supporting Files/Shared/nl.lproj/Localizable.strings",
     "en": "Supporting Files/Shared/en.lproj/Localizable.strings"
@@ -69,15 +65,9 @@ The project configuration file (localeasy.json) contains several keys that need 
 
 ## Sheet configuration
 
-For Localeasy to access your sheet, you need to configure some permissions first. There are two ways to do this. Using a public link is recommended because it is the simplest possible setup.
+For Localeasy to access your sheet, you need to configure some permissions first. The easiest way is to create a public read-only link, and paste it in the `sheet` parameter in your `localeasy.json` config.
 
-**Using a public read only link (recommended)**
-
-Create a public link that is viewable by everyone. Localeasy will use this link to download translations. This is the easiest way and does not require any further authentication. To use this, create a public link for your sheet and set the `authentication` field in `localeasy.json` to `public`.
-
-**Using OAuth**
-
-If you don't want to use a public link for your sheet, you can give access to individual users via OAuth. This is more complex, and requires you to configure a project in the Google Cloud Platform console. See [Advanced/User authentication through OAuth](#user-authentication-through-oauth).
+> If you don't want to use a public link for your sheet, you can give access to individual users via OAuth. See [Advanced/User authentication through OAuth](#user-authentication-through-oauth).
 
 ### Column layout
 
@@ -109,9 +99,9 @@ store_title_ios: Find us on the App Store!
 store_title_android: Find us on the Play Store!
 ```
 
-### Automatic placeholder conversion
+### Platform agnostic placeholders
 
-Localeasy will automatically convert placeholders to each platform specific format. This means you don't have to create platform specific strings if you need to do interpolation.
+Localeasy will automatically convert placeholders to each platform specific format. This means you don't have to use `%@` for iOS and `%s` for Android. You can always use `%s`,  localeasy will take care of the conversion.
 
 For example: The string `Welcome %s!` will be formatted as `Welcome %s!` for Android, and as `Welcome %@!` for iOS.
 
@@ -126,16 +116,14 @@ The summary is that you want to create an OAuth application configured with the 
 
 Follow these steps to configure the OAuth platform. Note, the steps might change in the future, this is just a guideline:
 
+1. In your `localeasy.json` config, add an `authentication` property with value `oauth`.
 1. In the [Google Cloud Platform console](https://console.developers.google.com), create a new project that will contain your API access. You can also reuse an existing project if you want.
 1. Navigate to the [API dashboard](https://console.cloud.google.com/apis/dashboard) and click "Enable APIs and Services".
 1. Add the [Google Sheets API](https://console.cloud.google.com/apis/library/sheets.googleapis.com)
-1. Navigate to the [OAuth consent screen dashboard](https://console.cloud.google.com/apis/credentials/consent) and configure the consent screen:
-   1. Add the `./auth/spreadsheets.readonly` scope.
-   1. Add optional test users. If you want to
+1. Navigate to the [OAuth consent screen dashboard](https://console.cloud.google.com/apis/credentials/consent) and configure the consent screen for the `./auth/spreadsheets.readonly` scope.
 1. Navigate to the [credentials](https://console.cloud.google.com/apis/credentials) dashboard and create an "OAuth client ID" credential:
    1. Select "Desktop app" as the application type.
    1. Save the Client ID and Client Secret to the `LOCALEASY_CLIENT_ID` and `LOCALEASY_CLIENT_SECRET` environment variables on your machine. When pulling localizations, localeasy will use these keys.
-
 
 ## Development
 

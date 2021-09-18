@@ -1,8 +1,9 @@
 {
   "authentication": "public",
-  "sheetID": "1234",
-  "sheetTab": "my-app",
-  "platform": "ios",
+  "sheet": "https://docs.google.com/spreadsheets/d/123/edit#gid=456",
+  "format": "ios-strings",
+  "convertPlaceholders": true,
+  "stripPlatformSuffixes": true,
   "locales": {
     "en": "output-en.txt",
     "nl": "output-nl.txt"

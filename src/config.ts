@@ -1,14 +1,12 @@
 import { fileExists } from "./utils/file.ts";
-import { Platform } from "./interfaces.ts";
+import { AuthenticationStrategy, Format } from "./interfaces.ts";
 import { UserError } from "./error.ts";
-
-export type AuthenticationStrategy = "public" | "user";
 
 export interface Config {
   authentication: AuthenticationStrategy;
   sheetID: string;
   sheetTab: string;
-  platform: Platform;
+  format: Format;
   convertPlaceholders: boolean;
   stripPlatformSuffixes: boolean;
   locales: { [key: string]: string };
@@ -24,19 +22,17 @@ export async function writeEmptyConfigFile(filePath: string) {
     throw new UserError(`Config file already exists at ${filePath}`);
   }
 
-  const configTemplate = `
+  const template = `
 {
-  "authentication": "public|user",
-  "sheetID": "ID of Google Sheet spreadsheet",
-  "sheetTab": "Name or ID of tab in spreadsheet",
-  "platform": "ios|android",
+  "sheet": "URL of Google Sheet spreadsheet",
+  "format": "ios-strings|android-xml",
   "locales": {
     "en": "path/to/outputfile",
     "nl": "path/to/outputfile"
   }
 }`;
 
-  await Deno.writeTextFile(filePath, configTemplate);
+  await Deno.writeTextFile(filePath, template);
 }
 
 function parseConfigJSON(json: string): Config {
@@ -51,35 +47,32 @@ function parseConfigJSON(json: string): Config {
   const errors: string[] = [];
 
   const {
-    authentication,
-    sheetID,
-    sheetTab,
-    platform,
+    authentication = "public",
+    sheet,
+    format,
     locales,
     convertPlaceholders = true,
     stripPlatformSuffixes = true,
   } = config;
 
+  const sheetURL = parseSheetURL(sheet);
+
   if (
     authentication !== "public" &&
-    authentication !== "user"
+    authentication !== "oauth"
   ) {
     errors.push(
-      `The config file contains an invalid authentication strategy. Valid values are 'public' or 'user'. Found '${authentication}'`,
+      `The config file contains an invalid authentication strategy. Valid values are 'public' or 'oauth'. Found '${authentication}'`,
     );
   }
 
-  if (!sheetID) {
-    errors.push(`There is no sheetID specified in the config file`);
+  if (!sheetURL) {
+    errors.push(`The config file contains an invalid or empty sheet URL`);
   }
 
-  if (!sheetTab) {
-    errors.push(`There is no sheetTab specified in the config file`);
-  }
-
-  if (platform !== "ios" && platform !== "android") {
+  if (format !== "ios-strings" && format !== "android-xml") {
     errors.push(
-      `The config contains an invalid platform identifier. Valid values are 'ios' or 'android'. Found '${platform}'`,
+      `The config contains an invalid format identifier. Valid values are 'ios-strings' or 'android-xml'. Found '${format}'`,
     );
   }
 
@@ -95,11 +88,34 @@ function parseConfigJSON(json: string): Config {
 
   return {
     authentication,
-    sheetID,
-    sheetTab,
-    platform,
+    sheetID: sheetURL?.sheetID as string,
+    sheetTab: sheetURL?.sheetTab as string,
+    format,
     locales,
     convertPlaceholders,
     stripPlatformSuffixes,
   };
+}
+
+function parseSheetURL(
+  urlString: string,
+): { sheetID: string; sheetTab: string } | undefined {
+  try {
+    const url = new URL(urlString);
+    const parts = url.pathname.split("/");
+
+    const indexBeforeID = parts.findIndex((e) => e == "d");
+    const sheetID = parts[indexBeforeID + 1];
+
+    if (indexBeforeID === -1 || sheetID === undefined) {
+      return undefined;
+    }
+
+    const hashMatches = url.hash.match(/#gid=(\d+)/);
+    const sheetTab = hashMatches === null ? "0" : (hashMatches[1] || "0");
+
+    return { sheetID, sheetTab };
+  } catch {
+    return undefined;
+  }
 }
