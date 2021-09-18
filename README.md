@@ -58,6 +58,7 @@ The project configuration file (localeasy.json) contains several keys that need 
     "en": "app/src/main/res/values/strings.xml"
   }
 }
+```
 
 ## Sheet configuration
 
