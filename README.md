@@ -46,25 +46,23 @@ Run `localeasy pull` to pull the latest translations and generate updated locali
 The project configuration file (localeasy.json) contains several keys that need to be configured:
 
 - `sheet`: The URL of the Google Sheet that contains the translations. (Make sure you are on the correct sheet tab when you copy the URL).
-- `format`: The output format that localeasy should use. Either `android-xml` or `ios-strings`.
-- `locales`: An object containing all locales that you want to support. The keys of this object correspond to colum headers in your spreadsheet. The values correspond to the filepaths where the files should be generated.
+- `locales`: An object containing all locales that you want to support. The keys of this object correspond to colum headers in your spreadsheet. The values correspond to the filepaths where the files should be generated. Files with the `.strings` extension use iOS formatting, files using the `.xml` extension use Android formatting.
 
 ### Example
 
 ```json
 {
   "sheet": "https://docs.google.com/spreadsheets/d/123/edit#gid=456",
-  "format": "ios-strings",
   "locales": {
     "nl": "Supporting Files/Shared/nl.lproj/Localizable.strings",
-    "en": "Supporting Files/Shared/en.lproj/Localizable.strings"
+    "en": "app/src/main/res/values/strings.xml"
   }
 }
-```
 
 ## Sheet configuration
 
 For Localeasy to access your sheet, you need to configure some permissions first. The easiest way is to create a public read-only link, and paste it in the `sheet` parameter in your `localeasy.json` config.
+```
 
 > If you don't want to use a public link for your sheet, you can give access to individual users via OAuth. See [Advanced/User authentication through OAuth](#user-authentication-through-oauth).
 
