@@ -74,7 +74,7 @@ The first row of your spreadsheet should contain column headers that localeasy u
 
 - `key`: The column that contains the key of a translation entry.
 - `comment`: The column that contains an optional comment for the entry. This column can be omitted.
-- `<locale1...>`: One or mulitple columns that contains the translated text for the entr. The header of this column must correspond to a locale configured in the `localeasy.json` config file. You can have as many locale columns as you need.
+- `<locale1...>`: One or mulitple columns that contains the translated text for the entry. The header of this column must correspond to a locale configured in the `localeasy.json` config file. You can have as many locale columns as you need.
 
 **Example**
 
