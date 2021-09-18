@@ -12,7 +12,6 @@ Localeasy talks to the Google Sheets API, downloads translations, and formats th
 - [Setup](#setup)
   - [Project configuration](#project-configuration)
   - [Sheet configuration](#sheet-configuration)
-    - [Column layout](#column-layout)
 - [Usage](#usage)
 - [Advanced](#advanced)
   - [Platform specific strings](#platform-specific-strings)
