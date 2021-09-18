@@ -7,9 +7,9 @@ export const format = (
   format: Format,
   options: FormattingOptions,
 ): string => {
-  if (format === "ios") {
+  if (format === "ios-strings") {
     return formatIOS(translations, options);
-  } else if (format === "android") {
+  } else if (format === "android-xml") {
     return formatAndroid(translations, options);
   }
 
