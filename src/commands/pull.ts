@@ -4,13 +4,14 @@ import { Sheet } from "../sheet.ts";
 import { getSheet as getSheetApi } from "../google/sheets-api.ts";
 import { getSheet as getSheetCsv } from "../google/sheets-csv.ts";
 import { logInfo, logPositive } from "../utils/log.ts";
+import { UserError } from "../error.ts";
 
 export async function pull(config: Config) {
-  logPositive(
-    `Pulling translations for ${config.format}.`,
-  );
-
   const locales = Object.keys(config.locales);
+
+  logInfo(
+    `Pulling translations for ${locales.length} locales`,
+  );
 
   let sheet: Sheet;
   if (config.authentication == "public") {
@@ -22,7 +23,7 @@ export async function pull(config: Config) {
   const translations = sheet.translations(locales);
 
   for (const [locale, outputPath] of Object.entries(config.locales)) {
-    logInfo(`Updating file "${outputPath}"`);
+    logInfo(`Updating file "${outputPath}" `, false);
 
     const entries = translations.map((translation) => ({
       locale,
@@ -31,10 +32,20 @@ export async function pull(config: Config) {
       comment: translation.comment,
     }));
 
-    const formattedOutput = format(entries, config.format, config);
+    let formattedOutput: string;
+
+    if (outputPath.endsWith(".strings")) {
+      formattedOutput = format(entries, "ios-strings", config);
+    } else if (outputPath.endsWith(".xml")) {
+      formattedOutput = format(entries, "android-xml", config);
+    } else {
+      throw new UserError(
+        `File path ${outputPath} has an unsupported file extension. Supported extensions are .strings and .xml`,
+      );
+    }
 
     await Deno.writeTextFile(outputPath, formattedOutput);
 
-    logPositive("Translations updated succesfully");
+    logPositive("Done");
   }
 }

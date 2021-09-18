@@ -1,12 +1,11 @@
 import { fileExists } from "./utils/file.ts";
-import { AuthenticationStrategy, Format } from "./interfaces.ts";
+import { AuthenticationStrategy } from "./interfaces.ts";
 import { UserError } from "./error.ts";
 
 export interface Config {
   authentication: AuthenticationStrategy;
   sheetID: string;
   sheetTab: string;
-  format: Format;
   convertPlaceholders: boolean;
   stripPlatformSuffixes: boolean;
   locales: { [key: string]: string };
@@ -25,7 +24,6 @@ export async function writeEmptyConfigFile(filePath: string) {
   const template = `
 {
   "sheet": "URL of Google Sheet spreadsheet",
-  "format": "ios-strings|android-xml",
   "locales": {
     "en": "path/to/outputfile",
     "nl": "path/to/outputfile"
@@ -49,7 +47,6 @@ function parseConfigJSON(json: string): Config {
   const {
     authentication = "public",
     sheet,
-    format,
     locales,
     convertPlaceholders = true,
     stripPlatformSuffixes = true,
@@ -70,12 +67,6 @@ function parseConfigJSON(json: string): Config {
     errors.push(`The config file contains an invalid or empty sheet URL`);
   }
 
-  if (format !== "ios-strings" && format !== "android-xml") {
-    errors.push(
-      `The config contains an invalid format identifier. Valid values are 'ios-strings' or 'android-xml'. Found '${format}'`,
-    );
-  }
-
   if (!locales || locales.length === 0) {
     errors.push("There are no locales specified in the config file");
   }
@@ -90,7 +81,6 @@ function parseConfigJSON(json: string): Config {
     authentication,
     sheetID: sheetURL?.sheetID as string,
     sheetTab: sheetURL?.sheetTab as string,
-    format,
     locales,
     convertPlaceholders,
     stripPlatformSuffixes,
