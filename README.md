@@ -63,7 +63,6 @@ The project configuration file (localeasy.json) contains several keys that need 
 ## Sheet configuration
 
 For Localeasy to access your sheet, you need to configure some permissions first. The easiest way is to create a public read-only link, and paste it in the `sheet` parameter in your `localeasy.json` config.
-```
 
 > If you don't want to use a public link for your sheet, you can give access to individual users via OAuth. See [Advanced/User authentication through OAuth](#user-authentication-through-oauth).
 
