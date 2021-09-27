@@ -46,7 +46,7 @@ Run `localeasy pull` to pull the latest translations and generate updated locali
 The project configuration file (localeasy.json) contains several keys that need to be configured:
 
 - `sheet`: The URL of the Google Sheet that contains the translations. (Make sure you are on the correct sheet tab when you copy the URL).
-- `locales`: An object containing all locales that you want to support. The keys of this object correspond to colum headers in your spreadsheet. The values correspond to the filepaths where the files should be generated. Files with the `.strings` extension use iOS formatting, files using the `.xml` extension use Android formatting.
+- `locales`: An object containing all locales that you want to support. The keys of this object correspond to colum headers in your spreadsheet. The values correspond to the filepaths where the files should be generated. The paths should have a `.strings` or `.xml` extension, for iOS or Android respectively.
 
 ### Example
 
