@@ -15,7 +15,7 @@ Localeasy talks to the Google Sheets API, downloads translations, and formats th
 - [Usage](#usage)
 - [Advanced](#advanced)
   - [Platform specific strings](#platform-specific-strings)
-  - [Automatic placeholder conversion](#automatic-placeholder-conversion)
+  - [Platform agnostic placeholders](#platform-agnostic-placeholders)
   - [User authentication through OAuth](#user-authentication-through-oauth)
 - [Development](#development)
 
