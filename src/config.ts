@@ -17,7 +17,7 @@ export async function loadConfig(filePath: string): Promise<Config> {
 }
 
 export async function writeEmptyConfigFile(filePath: string) {
-  if (fileExists(filePath)) {
+  if (await fileExists(filePath)) {
     throw new UserError(`Config file already exists at ${filePath}`);
   }
 
@@ -45,14 +45,18 @@ function parseConfigJSON(json: string): Config {
   const errors: string[] = [];
 
   const {
-    authentication = "public",
     sheet,
+    authentication = "public",
     locales,
     convertPlaceholders = true,
     stripPlatformSuffixes = true,
   } = config;
 
   const sheetURL = parseSheetURL(sheet);
+
+  if (!sheetURL) {
+    errors.push(`The config file contains an invalid or empty sheet URL`);
+  }
 
   if (
     authentication !== "public" &&
@@ -61,10 +65,6 @@ function parseConfigJSON(json: string): Config {
     errors.push(
       `The config file contains an invalid authentication strategy. Valid values are 'public' or 'oauth'. Found '${authentication}'`,
     );
-  }
-
-  if (!sheetURL) {
-    errors.push(`The config file contains an invalid or empty sheet URL`);
   }
 
   if (!locales || locales.length === 0) {
@@ -90,22 +90,17 @@ function parseConfigJSON(json: string): Config {
 function parseSheetURL(
   urlString: string,
 ): { sheetID: string; sheetTab: string } | undefined {
-  try {
-    const url = new URL(urlString);
-    const parts = url.pathname.split("/");
+  const pattern = new URLPattern(
+    "https://docs.google.com/spreadsheets/d/:id/edit#gid=:gid",
+  );
 
-    const indexBeforeID = parts.findIndex((e) => e == "d");
-    const sheetID = parts[indexBeforeID + 1];
+  const match = pattern.exec(urlString);
+  const sheetID = match?.pathname.groups.id;
+  const sheetTab = match?.hash.groups.gid;
 
-    if (indexBeforeID === -1 || sheetID === undefined) {
-      return undefined;
-    }
-
-    const hashMatches = url.hash.match(/#gid=(\d+)/);
-    const sheetTab = hashMatches === null ? "0" : (hashMatches[1] || "0");
-
-    return { sheetID, sheetTab };
-  } catch {
+  if (typeof sheetID !== "string" || typeof sheetTab !== "string") {
     return undefined;
   }
+
+  return { sheetID, sheetTab };
 }
