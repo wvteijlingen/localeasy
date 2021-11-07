@@ -5,6 +5,7 @@ import { parse as parseCsv } from "https://deno.land/std@0.82.0/encoding/csv.ts"
 export async function getSheet(
   id: string,
   name: string,
+  locales: string[],
 ): Promise<Sheet> {
   const response = await fetch(
     `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${name}`,
@@ -19,5 +20,5 @@ export async function getSheet(
   const csv = await response.text();
   const cells = await parseCsv(csv) as unknown[][];
 
-  return new Sheet(cells);
+  return new Sheet(cells, locales);
 }

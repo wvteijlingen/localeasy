@@ -1,6 +1,6 @@
 import { assertEquals, assertThrows } from "../dev_deps.ts";
 import { Sheet } from "../src/sheet.ts";
-import { MultiTranslation } from "../src/interfaces.ts";
+import { Translation } from "../src/interfaces.ts";
 import { UserError } from "../src/error.ts";
 
 Deno.test("translations", () => {
@@ -10,23 +10,19 @@ Deno.test("translations", () => {
     ["bar", "bar_nl", "bar_en", "bar_comment"],
   ];
 
-  const sheet = new Sheet(cells);
-  const actual = sheet.translations(["nl", "en"]);
+  const sheet = new Sheet(cells, ["nl", "en"]);
+  const actual = sheet.translations("nl");
 
-  const expected: MultiTranslation[] = [{
+  const expected: Translation[] = [{
+    locale: "nl",
     key: "foo",
     comment: "foo_comment",
-    translations: {
-      "nl": "foo_nl",
-      "en": "foo_en",
-    },
+    translation: "foo_nl",
   }, {
+    locale: "nl",
     key: "bar",
     comment: "bar_comment",
-    translations: {
-      "nl": "bar_nl",
-      "en": "bar_en",
-    },
+    translation: "bar_nl",
   }];
 
   assertEquals(actual, expected);
@@ -38,11 +34,9 @@ Deno.test("translations_throwsOnMissingKey", () => {
     ["", "foo_nl", "foo_en", "foo_comment"],
   ];
 
-  const sheet = new Sheet(cells);
-
   assertThrows(
     () => {
-      sheet.translations(["nl", "en"]);
+      new Sheet(cells, ["nl", "en"]);
     },
     UserError,
     "Invalid sheet: Missing key at row 2.",
@@ -55,11 +49,9 @@ Deno.test("translations_throwsOnMissingValue", () => {
     ["foo", "foo_nl", "", "foo_comment"],
   ];
 
-  const sheet = new Sheet(cells);
-
   assertThrows(
     () => {
-      sheet.translations(["nl", "en"]);
+      new Sheet(cells, ["nl", "en"]);
     },
     UserError,
     `Invalid sheet: Missing "en" translation for key "foo" at row 2.`,
@@ -72,11 +64,9 @@ Deno.test("translations_throwsOnMissingColumn", () => {
     ["foo", "foo_nl", "foo_comment"],
   ];
 
-  const sheet = new Sheet(cells);
-
   assertThrows(
     () => {
-      sheet.translations(["nl", "fr"]);
+      new Sheet(cells, ["nl", "fr"]);
     },
     UserError,
     `Column "fr" does not exist in the spreadsheet. Please add a column named "fr".`,

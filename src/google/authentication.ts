@@ -1,13 +1,11 @@
-import { AuthorizationCodeGrant, blue, serve } from "../../deps.ts";
-import {
-  FilePaths,
-  initializeGlobalConfigFolderIfNeeded,
-} from "../environment.ts";
+import { AuthorizationCodeGrant, serve } from "../../deps.ts";
+import { localStorage } from "../local-storage.ts";
 import { UserError } from "../error.ts";
-import { logInfo, logNegative } from "../utils/log.ts";
+import { OAuthCredentials } from "../interfaces.ts";
+import { blue, logInfo } from "../utils/log.ts";
 
 export async function getCredentials(): Promise<OAuthCredentials> {
-  const storedCredentials = await getStoredCredentials();
+  const storedCredentials = await localStorage.get("credentials");
 
   if (storedCredentials) {
     return storedCredentials;
@@ -36,11 +34,11 @@ export async function getCredentials(): Promise<OAuthCredentials> {
 
   if (typeof code === "string" && code !== "") {
     const response: OAuthCredentials = await codeGrant.requestToken({ code });
-    await setStoredCredentials(response);
+    await localStorage.set("credentials", response);
     return response;
   } else {
     throw new UserError(
-      "Something went wrong while trying to authenticating. Please try again.",
+      "Something went wrong while trying to authenticate. Please try again.",
     );
   }
 }
@@ -69,34 +67,9 @@ export async function refreshCredentials(
 
   const refreshedCredentials: OAuthCredentials = await response.json();
 
-  await setStoredCredentials(refreshedCredentials);
+  await localStorage.set("credentials", refreshedCredentials);
 
   return refreshedCredentials;
-}
-
-async function setStoredCredentials(credentials: OAuthCredentials) {
-  try {
-    const json = JSON.stringify(credentials);
-    await initializeGlobalConfigFolderIfNeeded();
-    await Deno.writeTextFile(FilePaths.oauthCredentials, json);
-    logInfo(
-      `Saved authentication credentials to ${FilePaths.oauthCredentials}`,
-    );
-  } catch (error) {
-    logNegative(
-      `Error saving oauth credentials to ${FilePaths.oauthCredentials}`,
-    );
-    throw new UserError(error);
-  }
-}
-
-async function getStoredCredentials(): Promise<OAuthCredentials | undefined> {
-  try {
-    const text = await Deno.readTextFile(FilePaths.oauthCredentials);
-    return JSON.parse(text);
-  } catch {
-    return undefined;
-  }
 }
 
 async function listenForOAuthCallback(): Promise<string | null> {
@@ -115,14 +88,6 @@ async function listenForOAuthCallback(): Promise<string | null> {
 
   server.close();
   return null;
-}
-
-interface OAuthCredentials {
-  "access_token": string;
-  "expires_in": number;
-  "refresh_token": string;
-  "scope": string;
-  "token_type": string;
 }
 
 function getOAuthSecrets(): { id: string; secret: string } {

@@ -1,21 +1,29 @@
 import { assertEquals, assertThrowsAsync } from "../dev_deps.ts";
-import { Config, loadConfig } from "../src/config.ts";
+import { loadProject } from "../src/project/project.ts";
 import { UserError } from "../src/error.ts";
+import { Project } from "../src/interfaces.ts";
 
 Deno.test("Loading valid config", async () => {
-  const expected: Config = {
+  const expected: Project = {
     authentication: "public",
     sheetID: "123",
     sheetTab: "456",
-    convertPlaceholders: true,
-    stripPlatformSuffixes: true,
-    locales: {
-      "en": "output-en.strings",
-      "nl": "output-nl.xml",
+    formatting: {
+      convertPlaceholders: true,
+      stripPlatformSuffixes: true,
     },
+    outputs: [{
+      locale: "en",
+      format: "ios-strings",
+      filePath: "output-en.strings",
+    }, {
+      locale: "nl",
+      format: "android-xml",
+      filePath: "output-nl.xml",
+    }],
   };
 
-  const actual = await loadConfig("./test/fixtures/config-valid.json");
+  const actual = await loadProject("./test/fixtures/config-valid.json");
 
   assertEquals(actual, expected);
 });
@@ -29,7 +37,7 @@ Deno.test("Loading invalid config", async () => {
 
   await assertThrowsAsync(
     async () => {
-      await loadConfig("./test/fixtures/config-invalid.json");
+      await loadProject("./test/fixtures/config-invalid.json");
     },
     expectedErrorType,
     expectedErrorMessage,
@@ -39,7 +47,7 @@ Deno.test("Loading invalid config", async () => {
 Deno.test("Loading invalid JSON", async () => {
   await assertThrowsAsync(
     async () => {
-      await loadConfig("./test/fixtures/config-invalid-json.json");
+      await loadProject("./test/fixtures/config-invalid-json.json");
     },
     UserError,
     "The config file is not a valid json file",

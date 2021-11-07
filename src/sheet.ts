@@ -1,22 +1,25 @@
 import { UserError } from "./error.ts";
-import { MultiTranslation } from "./interfaces.ts";
-
-interface ColumnIndexes {
-  keyIndex: number;
-  commentIndex: number;
-  translationIndexes: {
-    [key: string]: number;
-  };
-}
+import { Translation } from "./interfaces.ts";
 
 export class Sheet {
   private cells: unknown[][];
+  private entries: SheetEntry[];
 
-  constructor(cells: unknown[][]) {
+  constructor(cells: unknown[][], locales: string[]) {
     this.cells = cells;
+    this.entries = this.loadEntries(locales);
   }
 
-  translations(locales: string[]): MultiTranslation[] {
+  translations(locale: string): Translation[] {
+    return this.entries.map((translation) => ({
+      locale,
+      key: translation.key,
+      translation: translation.translations[locale],
+      comment: translation.comment,
+    }));
+  }
+
+  private loadEntries(locales: string[]): SheetEntry[] {
     const indexes = this.columnIndexes(locales);
 
     const localizations = this.cells.slice(1).map((row, index) => {
@@ -52,19 +55,6 @@ export class Sheet {
     return localizations;
   }
 
-  private findIndexOfColumn(name: string): number {
-    const headerRow = this.cells[0];
-    const index = headerRow.indexOf(name);
-
-    if (index === -1) {
-      throw new UserError(
-        `Column "${name}" does not exist in the spreadsheet. Please add a column named "${name}".`,
-      );
-    }
-
-    return index;
-  }
-
   private columnIndexes(locales: string[]): ColumnIndexes {
     const translationIndexes = Object.fromEntries(
       locales.map((locale) => {
@@ -80,6 +70,19 @@ export class Sheet {
     };
   }
 
+  private findIndexOfColumn(name: string): number {
+    const headerRow = this.cells[0];
+    const index = headerRow.indexOf(name);
+
+    if (index === -1) {
+      throw new UserError(
+        `Column "${name}" does not exist in the spreadsheet. Please add a column named "${name}".`,
+      );
+    }
+
+    return index;
+  }
+
   private stringFromCell(cell: unknown): string | undefined {
     if (typeof cell === "string" && cell !== "") {
       return cell;
@@ -89,18 +92,20 @@ export class Sheet {
 
     return `${cell}`;
   }
+}
 
-  private validate(locales: string[]) {
-    const message =
-      "The sheet seems to be invalid. Make sure the columns are set up as follows";
+interface ColumnIndexes {
+  keyIndex: number;
+  commentIndex: number;
+  translationIndexes: {
+    [key: string]: number;
+  };
+}
 
-    const example = `
-+------+-------+--------+------------------+
-| key  | en    | nl     |     comment      |
-+------+-------+--------+------------------+
-| key1 | Value | Waarde | Optional comment |
-| key2 | Value | Waarde | Optional comment |
-+------+-------+--------+------------------+
-`;
-  }
+interface SheetEntry {
+  key: string;
+  comment?: string;
+  translations: {
+    [key: string]: string;
+  };
 }

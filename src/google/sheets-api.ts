@@ -6,6 +6,7 @@ import { getCredentials, refreshCredentials } from "./authentication.ts";
 export async function getSheet(
   sheetID: string,
   sheetTab: string,
+  locales: string[],
   _shouldRefreshCredentials = true,
 ): Promise<Sheet> {
   const credentials = await getCredentials();
@@ -23,7 +24,7 @@ export async function getSheet(
   ) {
     logInfo("Access token expired, refreshing credentials...");
     await refreshCredentials(credentials);
-    return await getSheet(sheetID, sheetTab, false);
+    return await getSheet(sheetID, sheetTab, locales, false);
   }
 
   if (response.status !== 200) {
@@ -49,7 +50,7 @@ export async function getSheet(
     return row.values.map((cell) => cell.formattedValue);
   });
 
-  return new Sheet(cells);
+  return new Sheet(cells, locales);
 }
 
 interface SheetResponse {

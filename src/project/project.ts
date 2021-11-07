@@ -1,40 +1,17 @@
-import { fileExists } from "./utils/file.ts";
-import { AuthenticationStrategy } from "./interfaces.ts";
-import { UserError } from "./error.ts";
+import {
+  AuthenticationStrategy,
+  OutputFormat,
+  Project,
+} from "../interfaces.ts";
+import { UserError } from "../error.ts";
 
-export interface Config {
-  authentication: AuthenticationStrategy;
-  sheetID: string;
-  sheetTab: string;
-  convertPlaceholders: boolean;
-  stripPlatformSuffixes: boolean;
-  locales: { [key: string]: string };
+export async function loadProject(filePath: string): Promise<Project> {
+  const configurationJson = await Deno.readTextFile(filePath);
+  return parseProjectConfiguration(configurationJson);
 }
 
-export async function loadConfig(filePath: string): Promise<Config> {
-  const contents = await Deno.readTextFile(filePath);
-  return parseConfigJSON(contents);
-}
-
-export async function writeEmptyConfigFile(filePath: string) {
-  if (await fileExists(filePath)) {
-    throw new UserError(`Config file already exists at ${filePath}`);
-  }
-
-  const template = `
-{
-  "sheet": "URL of Google Sheet spreadsheet",
-  "locales": {
-    "en": "path/to/outputfile",
-    "nl": "path/to/outputfile"
-  }
-}`;
-
-  await Deno.writeTextFile(filePath, template);
-}
-
-function parseConfigJSON(json: string): Config {
-  let config;
+function parseProjectConfiguration(json: string): Project {
+  let config: Config;
 
   try {
     config = JSON.parse(json);
@@ -67,7 +44,7 @@ function parseConfigJSON(json: string): Config {
     );
   }
 
-  if (!locales || locales.length === 0) {
+  if (!locales || Object.keys(locales).length === 0) {
     errors.push("There are no locales specified in the config file");
   }
 
@@ -77,13 +54,23 @@ function parseConfigJSON(json: string): Config {
     );
   }
 
+  const outputs = Object.entries(locales).map(([locale, filePath]) => {
+    return {
+      locale,
+      format: outputFormatFromPath(filePath),
+      filePath,
+    };
+  });
+
   return {
     authentication,
-    sheetID: sheetURL?.sheetID as string,
-    sheetTab: sheetURL?.sheetTab as string,
-    locales,
-    convertPlaceholders,
-    stripPlatformSuffixes,
+    sheetID: sheetURL!.sheetID as string,
+    sheetTab: sheetURL!.sheetTab as string,
+    formatting: {
+      convertPlaceholders,
+      stripPlatformSuffixes,
+    },
+    outputs,
   };
 }
 
@@ -103,4 +90,24 @@ function parseSheetURL(
   }
 
   return { sheetID, sheetTab };
+}
+
+function outputFormatFromPath(path: string): OutputFormat {
+  if (path.endsWith(".strings")) {
+    return "ios-strings";
+  } else if (path.endsWith(".xml")) {
+    return "android-xml";
+  } else {
+    throw new UserError(
+      `File path '${path}' has an unsupported file extension. Supported extensions are '.strings' and '.xml'`,
+    );
+  }
+}
+
+interface Config {
+  authentication: AuthenticationStrategy;
+  sheet: string;
+  convertPlaceholders: boolean;
+  stripPlatformSuffixes: boolean;
+  locales: { [key: string]: string };
 }

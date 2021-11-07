@@ -1,14 +1,17 @@
-import { Formatter, FormattingOptions, Translation } from "../interfaces.ts";
+import { FormattingOptions, Translation } from "../interfaces.ts";
 import { sortTranslations } from "../utils/sort.ts";
 
-export const format: Formatter = (translations, options) => {
+export function format(
+  translations: Translation[],
+  options: FormattingOptions,
+) {
   const rows = sortTranslations(translations)
     .map((e) => formatTranslation(e, options))
     .join("");
 
   return '<?xml version="1.0" encoding="UTF-8"?>\n' + "<resources>\n" + rows +
     "</resources>";
-};
+}
 
 function formatTranslation(
   { comment, key, translation }: Translation,

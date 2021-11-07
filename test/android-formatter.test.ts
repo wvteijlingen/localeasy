@@ -1,6 +1,6 @@
 import { assertEquals } from "../dev_deps.ts";
 import { input } from "./fixtures/input.ts";
-import { format } from "../src/formatter/android.ts";
+import { format } from "../src/formatting/android.ts";
 
 const defaultOptions = {
   convertPlaceholders: true,
@@ -8,7 +8,8 @@ const defaultOptions = {
 };
 
 Deno.test("should format text as Android XML", () => {
-  const expected = `<?xml version="1.0" encoding="UTF-8"?>
+  const expected = `
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <string name="only">Translation only Android</string>
   <!-- comment -->
@@ -19,7 +20,7 @@ Deno.test("should format text as Android XML", () => {
   <string name="with_placeholder_escaped">Translation %%s with escaped placeholder</string>
   <string name="with_quotes">With &quot;quotes&quot;</string>
   <string name="without_comment">Translation without comment</string>
-</resources>`;
+</resources>`.trimStart();
 
   const actual = format(input, defaultOptions);
 

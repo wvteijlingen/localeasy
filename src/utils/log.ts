@@ -1,4 +1,5 @@
 import { green, red } from "../../deps.ts";
+export { blue } from "../../deps.ts";
 
 export function logNegative(message: string) {
   console.log(red(message));

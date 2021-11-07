@@ -1,19 +1,15 @@
-import { Config } from "../config.ts";
-import { FilePaths } from "../environment.ts";
+import { localStorage } from "../local-storage.ts";
 import { UserError } from "../error.ts";
 import { getCredentials } from "../google/authentication.ts";
-import { fileExists } from "../utils/file.ts";
+import { Project } from "../interfaces.ts";
 
-export async function authenticate(config: Config) {
-  if (config.authentication !== "oauth") {
+export async function authenticate(project: Project) {
+  if (project.authentication !== "oauth") {
     throw new UserError(
-      "Authentication is only required when using the 'oauth' authentication strategy.",
+      "Authentication is only supported when using the 'oauth' authentication strategy.",
     );
   }
 
-  if (await fileExists(FilePaths.oauthCredentials)) {
-    await Deno.remove(FilePaths.oauthCredentials);
-  }
-
+  await localStorage.clear();
   await getCredentials();
 }

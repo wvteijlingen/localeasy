@@ -5,24 +5,35 @@ export interface Translation {
   translation: string;
 }
 
-export interface MultiTranslation {
-  key: string;
-  comment?: string;
-  translations: {
-    [key: string]: string;
-  };
-}
-
-export type FormattingOptions = {
+export interface FormattingOptions {
   convertPlaceholders: boolean;
   stripPlatformSuffixes: boolean;
-};
+}
 
-export type Formatter = (
-  translations: Translation[],
-  options: FormattingOptions,
-) => string;
-
-export type Format = "ios-strings" | "android-xml";
+export type OutputFormat = "ios-strings" | "android-xml";
 
 export type AuthenticationStrategy = "public" | "oauth";
+
+export interface Project {
+  authentication: AuthenticationStrategy;
+  sheetID: string;
+  sheetTab: string;
+  formatting: FormattingOptions;
+  outputs: Array<{
+    locale: string;
+    format: OutputFormat;
+    filePath: string;
+  }>;
+}
+
+export interface OAuthCredentials {
+  "access_token": string;
+  "expires_in": number;
+  "refresh_token": string;
+  "scope": string;
+  "token_type": string;
+}
+
+export interface LocalStorage {
+  credentials?: OAuthCredentials;
+}

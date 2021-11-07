@@ -1,7 +1,9 @@
 import { yargs } from "../deps.ts";
-import { authenticate, init, pull } from "./commands/index.ts";
-import { loadConfig } from "./config.ts";
+import { loadProject } from "./project/project.ts";
 import { catchingUserError } from "./error.ts";
+import { pull } from "./commands/pull.ts";
+import { init } from "./commands/init.ts";
+import { authenticate } from "./commands/authenticate.ts";
 
 yargs(Deno.args)
   .scriptName("localeasy")
@@ -10,8 +12,8 @@ yargs(Deno.args)
     "Pull the latest translations based on the configuration file in the current working directory.",
     () => {
       catchingUserError(async () => {
-        const config = await loadConfig("./localeasy.json");
-        await pull(config);
+        const project = await loadProject("./localeasy.json");
+        await pull(project);
       });
     },
   )
@@ -26,8 +28,8 @@ yargs(Deno.args)
   )
   .command("authenticate", "Reauthenticate with Google Sheets.", () => {
     catchingUserError(async () => {
-      const config = await loadConfig("./localeasy.json");
-      await authenticate(config);
+      const project = await loadProject("./localeasy.json");
+      await authenticate(project);
     });
   })
   .strictCommands()
