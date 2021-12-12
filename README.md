@@ -118,7 +118,7 @@ Follow these steps to configure the OAuth platform. Note, the steps might change
 1. Navigate to the [API dashboard](https://console.cloud.google.com/apis/dashboard) and click "Enable APIs and Services".
 1. Add the [Google Sheets API](https://console.cloud.google.com/apis/library/sheets.googleapis.com)
 1. Navigate to the [OAuth consent screen dashboard](https://console.cloud.google.com/apis/credentials/consent) and configure the consent screen for the `./auth/spreadsheets.readonly` scope.
-1. Navigate to the [credentials](https://console.cloud.google.com/apis/credentials) dashboard and create an "OAuth client ID" credential:
+1. Navigate to the [credentials dashboard](https://console.cloud.google.com/apis/credentials) and create an "OAuth client ID" credential:
    1. Select "Desktop app" as the application type.
    1. Save the Client ID and Client Secret to the `LOCALEASY_CLIENT_ID` and `LOCALEASY_CLIENT_SECRET` environment variables on your machine. When pulling localizations, localeasy will use these keys.
 

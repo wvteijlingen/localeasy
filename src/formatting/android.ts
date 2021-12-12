@@ -43,13 +43,34 @@ function escapeSpecialCharacters(input: string): string {
     return input;
   }
 
-  return input
-    .replace(/@/g, "\\@")
-    .replace(/\?/g, "\\?")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "\\'")
-    .replace(/\n/g, "\\n");
+  return input.replace(/[<>&'"\n\@\?]/g, (c) => {
+    switch (c) {
+      case "@":
+        return "\\@";
+      case "?":
+        return "\\?";
+      case "<":
+        return "&lt;";
+      case ">":
+        return "&gt;";
+      case "&":
+        return "&amp;";
+      case '"':
+        return "&quot;";
+      case "'":
+        return "\\n";
+      case "\n":
+        return "\\n";
+    }
+  });
+
+  // return input
+  //   .replace(/@/g, "\\@")
+  //   .replace(/\?/g, "\\?")
+  //   .replace(/&/g, "&amp;")
+  //   .replace(/</g, "&lt;")
+  //   .replace(/>/g, "&gt;")
+  //   .replace(/"/g, "&quot;")
+  //   .replace(/'/g, "\\'")
+  //   .replace(/\n/g, "\\n");
 }
