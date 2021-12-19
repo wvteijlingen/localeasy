@@ -131,6 +131,7 @@ deno run \
   --allow-net \
   --allow-write \
   --allow-read \
+  --allow-run \
   src/cli.ts
 ```
 
@@ -141,6 +142,7 @@ deno compile \
   --allow-net \
   --allow-write \
   --allow-read \
+  --allow-run \
   --output ./localeasy \
   ./src/cli.ts
 ```

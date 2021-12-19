@@ -1,6 +1,5 @@
-import { localStorage } from "../local-storage.ts";
 import { UserError } from "../error.ts";
-import { getCredentials } from "../google/authentication.ts";
+import { authorize } from "../google/authentication.ts";
 import { Project } from "../interfaces.ts";
 
 export async function authenticate(project: Project) {
@@ -10,6 +9,5 @@ export async function authenticate(project: Project) {
     );
   }
 
-  await localStorage.clear();
-  await getCredentials();
+  await authorize(project.sheetID);
 }

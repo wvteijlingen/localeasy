@@ -1,15 +1,15 @@
 import { UserError } from "../error.ts";
 import { Sheet } from "../sheet.ts";
 import { logInfo } from "../utils/log.ts";
-import { getCredentials, refreshCredentials } from "./authentication.ts";
+import { authorize, refreshAuthorization } from "./authentication.ts";
 
 export async function getSheet(
   sheetID: string,
   sheetTab: string,
   locales: string[],
-  _shouldRefreshCredentials = true,
+  _shouldRefreshAuthorization = true,
 ): Promise<Sheet> {
-  const credentials = await getCredentials();
+  const credentials = await authorize(sheetID);
 
   const response = await fetch(
     `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}?includeGridData=true`,
@@ -20,10 +20,10 @@ export async function getSheet(
 
   if (
     (response.status === 401 || response.status === 403) &&
-    _shouldRefreshCredentials
+    _shouldRefreshAuthorization
   ) {
     logInfo("Access token expired, refreshing credentials...");
-    await refreshCredentials(credentials);
+    await refreshAuthorization(sheetID, credentials);
     return await getSheet(sheetID, sheetTab, locales, false);
   }
 

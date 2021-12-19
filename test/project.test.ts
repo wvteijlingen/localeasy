@@ -1,5 +1,5 @@
 import { assertEquals, assertThrowsAsync } from "../dev_deps.ts";
-import { loadProject } from "../src/project/project.ts";
+import { loadProjectFromConfigFile } from "../src/config.ts";
 import { UserError } from "../src/error.ts";
 import { Project } from "../src/interfaces.ts";
 
@@ -23,7 +23,9 @@ Deno.test("Loading valid config", async () => {
     }],
   };
 
-  const actual = await loadProject("./test/fixtures/config-valid.json");
+  const actual = await loadProjectFromConfigFile(
+    "./test/fixtures/config-valid.json",
+  );
 
   assertEquals(actual, expected);
 });
@@ -32,12 +34,12 @@ Deno.test("Loading invalid config", async () => {
   const expectedErrorType = UserError;
 
   const expectedErrorMessage = `The config file is invalid:
-- The config file contains an invalid or empty sheet URL
+- The config file contains an empty or invalid sheet URL
 - There are no locales specified in the config file`;
 
   await assertThrowsAsync(
     async () => {
-      await loadProject("./test/fixtures/config-invalid.json");
+      await loadProjectFromConfigFile("./test/fixtures/config-invalid.json");
     },
     expectedErrorType,
     expectedErrorMessage,
@@ -47,7 +49,9 @@ Deno.test("Loading invalid config", async () => {
 Deno.test("Loading invalid JSON", async () => {
   await assertThrowsAsync(
     async () => {
-      await loadProject("./test/fixtures/config-invalid-json.json");
+      await loadProjectFromConfigFile(
+        "./test/fixtures/config-invalid-json.json",
+      );
     },
     UserError,
     "The config file is not a valid json file",

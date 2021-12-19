@@ -1,11 +1,13 @@
 import { AuthorizationCodeGrant, serve } from "../../deps.ts";
-import { localStorage } from "../local-storage.ts";
 import { UserError } from "../error.ts";
 import { OAuthCredentials } from "../interfaces.ts";
-import { blue, logInfo } from "../utils/log.ts";
+import { Keyring } from "../keyring.ts";
+import { logInfo, logSpecial } from "../utils/log.ts";
 
-export async function getCredentials(): Promise<OAuthCredentials> {
-  const storedCredentials = await localStorage.get("credentials");
+export async function authorize(
+  sheetID: string,
+): Promise<OAuthCredentials> {
+  const storedCredentials = await Keyring.get(sheetID);
 
   if (storedCredentials) {
     return storedCredentials;
@@ -25,17 +27,18 @@ export async function getCredentials(): Promise<OAuthCredentials> {
   const url = codeGrant.constructAuthorizationRequestURI();
 
   logInfo(
-    `No stored credentials found, open the following url in your browser to authenticate with Google: ${
-      blue(url)
-    }`,
+    "No stored credentials found, open the following url in your browser to authenticate with Google:",
   );
+  logSpecial(url);
 
   const code = await listenForOAuthCallback();
 
   if (typeof code === "string" && code !== "") {
-    const response: OAuthCredentials = await codeGrant.requestToken({ code });
-    await localStorage.set("credentials", response);
-    return response;
+    const credentials: OAuthCredentials = await codeGrant.requestToken({
+      code,
+    });
+    await Keyring.set(sheetID, credentials);
+    return credentials;
   } else {
     throw new UserError(
       "Something went wrong while trying to authenticate. Please try again.",
@@ -43,7 +46,8 @@ export async function getCredentials(): Promise<OAuthCredentials> {
   }
 }
 
-export async function refreshCredentials(
+export async function refreshAuthorization(
+  sheetID: string,
   credentials: OAuthCredentials,
 ): Promise<OAuthCredentials> {
   const oauthSecrets = getOAuthSecrets();
@@ -67,7 +71,7 @@ export async function refreshCredentials(
 
   const refreshedCredentials: OAuthCredentials = await response.json();
 
-  await localStorage.set("credentials", refreshedCredentials);
+  await Keyring.set(sheetID, refreshedCredentials);
 
   return refreshedCredentials;
 }
@@ -87,6 +91,7 @@ async function listenForOAuthCallback(): Promise<string | null> {
   }
 
   server.close();
+
   return null;
 }
 
@@ -94,15 +99,9 @@ function getOAuthSecrets(): { id: string; secret: string } {
   const id = Deno.env.get("LOCALEASY_CLIENT_ID");
   const secret = Deno.env.get("LOCALEASY_CLIENT_SECRET");
 
-  if (id === undefined) {
+  if (id === undefined || secret === undefined) {
     throw new UserError(
-      'Environment variable "LOCALEASY_CLIENT_ID" is not configured. See the readme for more information.',
-    );
-  }
-
-  if (secret === undefined) {
-    throw new UserError(
-      'Environment variable "LOCALEASY_CLIENT_SECRET" is not configured. See the readme for more information.',
+      'OAuth authentication requires the environment variables "LOCALEASY_CLIENT_ID" and "LOCALEASY_CLIENT_SECRET" to be set.',
     );
   }
 

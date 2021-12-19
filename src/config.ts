@@ -43,7 +43,7 @@ function parseConfigToProject(configFile: ConfigFile): Project {
     locales: {},
   };
 
-  const config = Object.assign({}, configFile, defaults);
+  const config = Object.assign({}, defaults, configFile);
   const errors: string[] = [];
   const parsedSheet = parseSheetURL(config.sheet);
 
