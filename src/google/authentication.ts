@@ -1,4 +1,4 @@
-import { AuthorizationCodeGrant, serve } from "../../deps.ts";
+import { AuthorizationCodeGrant, loadDotEnv, serve } from "../../deps.ts";
 import { UserError } from "../error.ts";
 import { OAuthCredentials } from "../interfaces.ts";
 import { Keyring } from "../keyring.ts";
@@ -96,12 +96,17 @@ async function listenForOAuthCallback(): Promise<string | null> {
 }
 
 function getOAuthSecrets(): { id: string; secret: string } {
-  const id = Deno.env.get("LOCALEASY_CLIENT_ID");
-  const secret = Deno.env.get("LOCALEASY_CLIENT_SECRET");
+  const dotEnv = loadDotEnv();
+
+  const id = dotEnv.LOCALEASY_CLIENT_ID ||
+    Deno.env.get("LOCALEASY_CLIENT_ID");
+
+  const secret = dotEnv.LOCALEASY_CLIENT_SECRET ||
+    Deno.env.get("LOCALEASY_CLIENT_SECRET");
 
   if (id === undefined || secret === undefined) {
     throw new UserError(
-      'OAuth authentication requires the environment variables "LOCALEASY_CLIENT_ID" and "LOCALEASY_CLIENT_SECRET" to be set.',
+      'OAuth authentication requires the environment variables "LOCALEASY_CLIENT_ID" and "LOCALEASY_CLIENT_SECRET". Note: Localeasy supports dotenv files.',
     );
   }
 

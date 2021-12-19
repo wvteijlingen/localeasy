@@ -21,7 +21,7 @@ export async function pull(project: Project) {
       project.formatting,
     );
     await Deno.writeTextFile(output.filePath, formattedOutput);
-    logPositive(" Done");
+    logPositive(" - Done");
   }
 }
 

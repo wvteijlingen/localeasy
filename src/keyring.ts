@@ -4,7 +4,7 @@ import { OAuthCredentials } from "./interfaces.ts";
 import { createDirectoryRecursive, getConfigDirectory } from "./utils/file.ts";
 
 export const Keyring = {
-  async get(account: string): Promise<OAuthCredentials> {
+  async get(account: string): Promise<OAuthCredentials | undefined> {
     if (Deno.build.os === "darwin") {
       return await getCredentialsFromKeychain(account);
     } else {
@@ -28,7 +28,7 @@ export const Keyring = {
 
 async function getCredentialsFromKeychain(
   account: string,
-): Promise<OAuthCredentials> {
+): Promise<OAuthCredentials | undefined> {
   const security = Deno.run({
     cmd: [
       "security",
@@ -49,6 +49,8 @@ async function getCredentialsFromKeychain(
   if (code === 0) {
     const output = new TextDecoder().decode(rawOutput);
     return JSON.parse(output);
+  } else if (code === 44) {
+    return undefined;
   } else {
     throw new UserError(
       `Could not read credentials from keychain. Error code ${code}`,
