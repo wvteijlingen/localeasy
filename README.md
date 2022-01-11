@@ -15,7 +15,7 @@ Localeasy talks to the Google Sheets API, downloads translations, and formats th
 - [Usage](#usage)
 - [Advanced](#advanced)
   - [Platform specific strings](#platform-specific-strings)
-  - [Platform agnostic placeholders](#platform-agnostic-placeholders)
+  - [Universal placeholders](#universal-placeholders)
   - [User authentication through OAuth](#user-authentication-through-oauth)
 - [Development](#development)
 
@@ -96,9 +96,9 @@ store_title_ios: Find us on the App Store!
 store_title_android: Find us on the Play Store!
 ```
 
-### Platform agnostic placeholders
+### Universal placeholders
 
-Localeasy will automatically convert placeholders to each platform specific format. This means you don't have to use `%@` for iOS and `%s` for Android. You can always use `%s`,  localeasy will take care of the conversion.
+Localeasy will automatically convert placeholders to each platform specific format. This means you don't have to use `%@` for iOS and `%s` for Android. You can always use the universal placeholder `%s`, localeasy will take care of the conversion.
 
 For example: The string `Welcome %s!` will be formatted as `Welcome %s!` for Android, and as `Welcome %@!` for iOS.
 
