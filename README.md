@@ -124,31 +124,10 @@ Follow these steps to configure the OAuth platform. Note, the steps might change
 
 ## Development
 
-**Running**
-```
-deno run \
-  --allow-env=HOME,FOLDERID_Profile,LOCALEASY_CLIENT_ID,LOCALEASY_CLIENT_SECRET \
-  --allow-net \
-  --allow-write \
-  --allow-read \
-  --allow-run \
-  src/cli.ts
-```
+Available commands:
 
-**Compiling**
-```
-deno compile \
-  --allow-env=HOME,FOLDERID_Profile,LOCALEASY_CLIENT_ID,LOCALEASY_CLIENT_SECRET \
-  --allow-net \
-  --allow-write \
-  --allow-read \
-  --allow-run \
-  --output ./localeasy \
-  ./src/cli.ts
-```
-
-**Testing**
-```
-deno test \
-  --allow-read=./test/fixtures
+```bash
+deno task run
+deno task test
+deno task compile
 ```
