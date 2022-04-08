@@ -1,4 +1,4 @@
-import { AuthorizationCodeGrant, loadDotEnv, serve } from "../../depts.ts";
+import { AuthorizationCodeGrant, loadDotEnv } from "../../depts.ts";
 import { UserError } from "../error.ts";
 import { OAuthCredentials } from "../interfaces.ts";
 import { Keyring } from "../keyring.ts";
@@ -77,20 +77,28 @@ export async function refreshAuthorization(
 }
 
 async function listenForOAuthCallback(): Promise<string | null> {
-  const server = serve({ port: 8080 });
+  const server = Deno.listen({ port: 8080 });
 
-  for await (const request of server) {
-    const searchParameters = new URLSearchParams(request.url.substring(1));
-    const code = searchParameters.get("code");
-    await request.respond({
-      status: 200,
-      body: "You can close this browser window and return to the command line.",
-    });
-    server.close();
-    return code;
+  for await (const connection of server) {
+    const httpConnection = Deno.serveHttp(connection);
+
+    for await (const requestEvent of httpConnection) {
+      const searchParameters = new URLSearchParams(
+        requestEvent.request.url.substring(1),
+      );
+
+      const code = searchParameters.get("code");
+
+      requestEvent.respondWith(
+        new Response(
+          "You can close this browser window and return to the command line.",
+          { status: 200 },
+        ),
+      );
+
+      return code;
+    }
   }
-
-  server.close();
 
   return null;
 }
