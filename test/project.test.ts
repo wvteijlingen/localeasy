@@ -1,4 +1,4 @@
-import { assertEquals, assertThrowsAsync } from "../dev_depts.ts";
+import { assertEquals, assertRejects } from "../dev_depts.ts";
 import { loadProjectFromConfigFile } from "../src/config.ts";
 import { UserError } from "../src/error.ts";
 import { Project } from "../src/interfaces.ts";
@@ -37,7 +37,7 @@ Deno.test("Loading invalid config", async () => {
 - The config file contains an empty or invalid sheet URL
 - There are no locales specified in the config file`;
 
-  await assertThrowsAsync(
+  await assertRejects(
     async () => {
       await loadProjectFromConfigFile("./test/fixtures/config-invalid.json");
     },
@@ -47,7 +47,7 @@ Deno.test("Loading invalid config", async () => {
 });
 
 Deno.test("Loading invalid JSON", async () => {
-  await assertThrowsAsync(
+  await assertRejects(
     async () => {
       await loadProjectFromConfigFile(
         "./test/fixtures/config-invalid-json.json",
