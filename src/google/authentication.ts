@@ -1,4 +1,4 @@
-import { AuthorizationCodeGrant, loadDotEnv, serve } from "../../deps.ts";
+import { AuthorizationCodeGrant, loadDotEnv, serve } from "../../depts.ts";
 import { UserError } from "../error.ts";
 import { OAuthCredentials } from "../interfaces.ts";
 import { Keyring } from "../keyring.ts";

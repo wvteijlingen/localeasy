@@ -1,4 +1,4 @@
-import { assertEquals } from "../dev_deps.ts";
+import { assertEquals } from "../dev_depts.ts";
 import { input } from "./fixtures/input.ts";
 import { format } from "../src/formatting/android.ts";
 

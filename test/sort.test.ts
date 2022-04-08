@@ -1,4 +1,4 @@
-import { assertEquals } from "../dev_deps.ts";
+import { assertEquals } from "../dev_depts.ts";
 import { sortTranslations } from "../src/utils/sort.ts";
 
 Deno.test("sortTranslations", () => {

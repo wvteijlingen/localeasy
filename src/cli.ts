@@ -1,4 +1,4 @@
-import { yargs } from "../deps.ts";
+import { yargs } from "../depts.ts";
 import { loadProjectFromConfigFile } from "./config.ts";
 import { catchingUserError } from "./error.ts";
 import { pull } from "./commands/pull.ts";

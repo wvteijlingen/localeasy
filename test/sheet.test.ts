@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from "../dev_deps.ts";
+import { assertEquals, assertThrows } from "../dev_depts.ts";
 import { Sheet } from "../src/sheet.ts";
 import { Translation } from "../src/interfaces.ts";
 import { UserError } from "../src/error.ts";

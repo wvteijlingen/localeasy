@@ -1,4 +1,4 @@
-import { path } from "../../deps.ts";
+import { path } from "../../depts.ts";
 import { UserError } from "../error.ts";
 
 async function dirExists(path: string): Promise<boolean> {
