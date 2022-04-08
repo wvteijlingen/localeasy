@@ -1,4 +1,4 @@
-import { path } from "../deps.ts";
+import { path } from "../depts.ts";
 import { UserError } from "./error.ts";
 import { OAuthCredentials } from "./interfaces.ts";
 import { createDirectoryRecursive, getConfigDirectory } from "./utils/file.ts";
