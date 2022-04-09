@@ -22,6 +22,14 @@ export const Keyring = {
       return await setCredentialsToFile(account, credentials);
     }
   },
+
+  async delete(account: string): Promise<void> {
+    if (Deno.build.os === "darwin") {
+      return await deleteCredentialsFromKeychain(account);
+    } else {
+      return await deleteCredentialsFromFile(account);
+    }
+  },
 };
 
 // Keychain
@@ -136,4 +144,13 @@ async function setCredentialsToFile(
   const filePath = path.join(CREDENTIALS_FOLDER, `${account}.json`);
   const json = JSON.stringify(credentials);
   await Deno.writeTextFile(filePath, json);
+}
+
+async function deleteCredentialsFromFile(
+  account: string,
+): Promise<void> {
+  await createDirectoryRecursive(CREDENTIALS_FOLDER);
+
+  const filePath = path.join(CREDENTIALS_FOLDER, `${account}.json`);
+  await Deno.writeTextFile(filePath, "");
 }
