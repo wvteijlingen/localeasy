@@ -1,6 +1,6 @@
 import { UserError } from "../error.ts";
 import { Sheet } from "../sheet.ts";
-import { parse as parseCsv } from "https://deno.land/std@0.82.0/encoding/csv.ts";
+import { parseCsv } from "../../depts.ts";
 
 export async function getSheet(
   id: string,
