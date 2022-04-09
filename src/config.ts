@@ -1,5 +1,6 @@
 import { UserError } from "./error.ts";
 import { AuthenticationStrategy, OutputFormat, Project } from "./interfaces.ts";
+import { path } from "../depts.ts";
 import { fileExists } from "./utils/file.ts";
 
 export async function writeEmptyConfigFile(filePath: string) {
@@ -22,6 +23,12 @@ export async function writeEmptyConfigFile(filePath: string) {
 export async function loadProjectFromConfigFile(
   filePath: string,
 ): Promise<Project> {
+  if (await fileExists(filePath) == false) {
+    throw new UserError(
+      `No config file found. Expected ${path.resolve(filePath)}`,
+    );
+  }
+
   const json = await Deno.readTextFile(filePath);
 
   let configFile: ConfigFile;
