@@ -13,7 +13,7 @@ export async function authorize(
     return storedCredentials;
   }
 
-  const oauthSecrets = getOAuthSecrets();
+  const oauthSecrets = await getOAuthSecrets();
 
   const codeGrant = new AuthorizationCodeGrant({
     clientId: oauthSecrets.id,
@@ -50,7 +50,7 @@ export async function refreshAuthorization(
   sheetID: string,
   credentials: OAuthCredentials,
 ): Promise<OAuthCredentials> {
-  const oauthSecrets = getOAuthSecrets();
+  const oauthSecrets = await getOAuthSecrets();
   const formdata = new FormData();
 
   formdata.append("grant_type", "refresh_token");
@@ -83,11 +83,8 @@ async function listenForOAuthCallback(): Promise<string | null> {
     const httpConnection = Deno.serveHttp(connection);
 
     for await (const requestEvent of httpConnection) {
-      const searchParameters = new URLSearchParams(
-        requestEvent.request.url.substring(1),
-      );
-
-      const code = searchParameters.get("code");
+      const url = new URL(requestEvent.request.url);
+      const code = url.searchParams.get("code");
 
       requestEvent.respondWith(
         new Response(
@@ -103,8 +100,8 @@ async function listenForOAuthCallback(): Promise<string | null> {
   return null;
 }
 
-function getOAuthSecrets(): { id: string; secret: string } {
-  const dotEnv = loadDotEnv();
+async function getOAuthSecrets(): Promise<{ id: string; secret: string }> {
+  const dotEnv = await loadDotEnv();
 
   const id = dotEnv.LOCALEASY_CLIENT_ID ||
     Deno.env.get("LOCALEASY_CLIENT_ID");
