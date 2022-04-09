@@ -24,7 +24,7 @@ Localeasy talks to the Google Sheets API, downloads translations, and formats th
 **Using homebrew**
 
 ```
-brew install localeasy
+brew install wvteijlingen/tap/localeasy
 ```
 
 **Using the binary**
