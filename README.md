@@ -2,9 +2,11 @@
 
 # Localeasy - Effortless app localization
 
-With Localeasy you can use Google Sheets (or any CSV file) to store and manage your app translations. This has many benefits such as easy user management, change tracking, comments, no limits on contributors, and it's free of charge.
+Localeasy converts CSV to platform specific localization formats. Localeasy parses your spreadsheet, and generates Apple Strings, Apple String Catalog, or Android XML files.
 
-Localeasy parses your spreadsheet, and generates Apple Strings, Apple String Catalog, or Android XML files.
+This means you can use any tabular data format to store and manage your translations, as long as you can export it to CSV.
+
+For example, you can use Google Sheets, which hase many benefits such as easy user management, change tracking, comments, no limits on contributors, and being free of charge.
 
 ## Installation
 
@@ -24,14 +26,14 @@ You can also download and run the latest binary.
 
 ## Usage
 
-Run the `localeasy` command to and generate a localization file from a Google Sheet or CSV file.
+Run the `localeasy` command to and generate a localization file from a CSV file.
 
-For example, using a Google Sheet:
+For example, using a Google Sheet public link:
 
 ```bash
 localeasy \
   --csv https://docs.google.com/spreadsheets/d/123/edit?gid=0#gid=0 \
-  --format androidXml
+  --format androidXml \
   --locale en
 ```
 
@@ -40,13 +42,11 @@ Or a local CSV file:
 ```bash
 localeasy \
   --csv path/to/file.csv \
-  --format androidXml
+  --format androidXml \
   --locale en
 ```
 
-> Note: Localeasy isn't limited to Google Sheets, it supports all comma separated CSV as input.
-
-## Supported file formats
+## Supported output formats
 
 - Android XML: `--format androidXml`
 - Apple Strings Catalog: `--format appleStringsCatalog`
@@ -54,7 +54,7 @@ localeasy \
 
 ## Sheet configuration
 
-> For Localeasy to access a Google Sheet, it needs read-only permissions.
+> If you're using Google Sheets, Localeasy needs to have read-only permissions.
 > The easiest way is to create a public read-only link using the Share dialog in the Google Sheet editor.
 
 ### Column layout
@@ -62,14 +62,14 @@ localeasy \
 The first row of your spreadsheet should contain column headers that Localeasy uses to identify each column.
 The order of the columns does not matter, as long as at least the following columns are present:
 
-- `key`: The column that contains the key of a translation entry.
+- `key`: The column that contains the key of each translation entry.
 - `<locale1...>`: One or muliple columns that contains the translated text for the entry. You can have as many locale columns as you need.
-- `comment`: Optional column that contains an comment for the entry.
 
-Additionally you can add the following columns to enable translation variants and plurals:
+Additionally you can add the following columns to enable plurals, translation variants, and comments:
 
-- `variant`: Optional column that contains the variant of the translation entry.
-- `quantity`: Optional column that contains the pluralized quantity of the translation entry.
+- `quantity`: Optional column that contains the quantity of a pluralized translation entry.
+- `variant`: Optional column that contains the variant of a translation entry.
+- `comment`: Optional column that contains an comment for a translation entry.
 
 **Example**
 
@@ -80,11 +80,11 @@ A fully configured sheet could look like this:
 | key   | variant | quantity | en         | nl          | comment          |
 +-------+---------+----------+---------------------------------------------+
 | cow   |         |          | Cow        | Koe         | A grazing animal |
-| store | android |          | Play Store | Play Store  |                  |
-| store | ios     |          | App Store  | App Store   |                  |
 | bird  |         | one      | %1$d bird  | %1$d vogel  | A flying animal  |
 | bird  |         | other    | %1$d birds | %1$d vogels |                  |
 | bird  |         | other    | %1$d birds | %1$d vogels |                  |
+| store | android |          | Play Store | Play Store  |                  |
+| store | ios     |          | App Store  | App Store   |                  |
 +-------+---------+----------+---------------------------------------------+
 ```
 

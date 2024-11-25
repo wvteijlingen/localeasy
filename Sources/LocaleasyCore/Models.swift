@@ -11,6 +11,7 @@ public struct RowError: LocalizedError {
 
 public enum LocaleasyError: LocalizedError, Equatable {
     // CLI errors
+    case inputRequired
     case localeArgumentRequired
     case variantArgumentRequired
     case invalidInputArgument
@@ -26,6 +27,8 @@ public enum LocaleasyError: LocalizedError, Equatable {
 
     public var errorDescription: String? {
         switch self {
+        case .inputRequired:
+            return "Argument '--in', or stdin is required"
         case .localeArgumentRequired:
             return "Selected output format requires the '--locale' argument to be set"
         case .variantArgumentRequired:
@@ -33,7 +36,7 @@ public enum LocaleasyError: LocalizedError, Equatable {
         case .invalidInputArgument:
             return "The provided input file path or url is invalid"
         case .invalidOutputArgument:
-            return "The provided output file path is invalid"
+            return "The provided output file path or url is invalid"
 
         case .missingKey:
             return "Key is missing"
