@@ -43,9 +43,9 @@ struct Localeasy: ParsableCommand {
                 throw LocaleasyError.invalidInputArgument
             }
 
-            sheet = try Sheet(url: inputURL, configParsingMode: .multipleConfigColumns)
+            sheet = try Sheet(url: inputURL)
         } else if let stdin = readStdin() {
-            sheet = try Sheet(csv: stdin, configParsingMode: .multipleConfigColumns)
+            sheet = try Sheet(csv: stdin)
         } else {
             throw LocaleasyError.inputRequired
         }

@@ -345,7 +345,7 @@ struct AppleStringsCatalogFormatterTests {
 }
 
 private func formatUsingAppleStringsCatalogFormatter(_ csv: String, variant: String?) throws -> String {
-    let sheet = try Sheet(csv: csv, configParsingMode: .multipleConfigColumns)
+    let sheet = try Sheet(csv: csv)
     let formatter = AppleStringsCatalogFormatter(sheet: sheet, variant: variant)
 
     let actual = try formatter.format()

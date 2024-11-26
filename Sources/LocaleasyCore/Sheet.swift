@@ -5,17 +5,17 @@ public class Sheet {
     let locales: [String]
     private let rows: [Row]
 
-    public convenience init(csv: String, configParsingMode: ConfigParsingMode) throws {
+    public convenience init(csv: String) throws {
         let csv = try CSV<Named>(string: csv, delimiter: .comma)
-        try self.init(csv: csv, configParsingMode: configParsingMode)
+        try self.init(csv: csv)
     }
 
-    public convenience init(url: URL, configParsingMode: ConfigParsingMode) throws {
+    public convenience init(url: URL) throws {
         let csv = try CSV<Named>(url: url, delimiter: .comma)
-        try self.init(csv: csv, configParsingMode: configParsingMode)
+        try self.init(csv: csv)
     }
 
-    private init(csv: CSV<Named>, configParsingMode: ConfigParsingMode) throws {
+    private init(csv: CSV<Named>) throws {
         let reservedColumnNames = ["key", "variant", "quantity", "comment"]
         let locales = csv.header.filter { !reservedColumnNames.contains($0) }
         self.locales = locales
@@ -30,12 +30,7 @@ public class Sheet {
                     throw LocaleasyError.missingKey
                 }
 
-                let config = switch configParsingMode {
-                case .singleConfigColumn:
-                    try RowConfig(configString: rowData["config"])
-                case .multipleConfigColumns:
-                    try RowConfig(variant: rowData["variant"], quantity: rowData["quantity"])
-                }
+                let config = try RowConfig(variant: rowData["variant"], quantity: rowData["quantity"])
 
                 let row = Row(
                     rowNumber: rowNumber,

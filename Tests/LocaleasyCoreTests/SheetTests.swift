@@ -9,7 +9,7 @@ struct SheetTests {
         plain,,,Hello world!,Hallo wereld!,A basic entry
         """
 
-        _ = try Sheet(csv: csvString, configParsingMode: .multipleConfigColumns)
+        _ = try Sheet(csv: csvString)
     }
 
     @Test("Creating a Sheet from a CSV String - duplicate rows")
@@ -20,9 +20,12 @@ struct SheetTests {
         plain,,,Hi,Hoi,A duplicate entry
         """
 
-        // TODO: Add assertion that checks for LocaleasyError.duplicateRow
-        #expect(throws: RowError.self) {
-            _ = try Sheet(csv: csvString, configParsingMode: .multipleConfigColumns)
+        do {
+            _ = try Sheet(csv: csvString)
+            Issue.record("init(csv:) should throw on duplicate rows")
+        } catch {
+            let localeasyError = (error as? RowError)?.error as? LocaleasyError
+            #expect(localeasyError == LocaleasyError.duplicateRow)
         }
     }
 
@@ -34,7 +37,7 @@ struct SheetTests {
         """
 
         #expect(throws: RowError.self) {
-            _ = try Sheet(csv: csvString, configParsingMode: .multipleConfigColumns)
+            _ = try Sheet(csv: csvString)
         }
     }
 
@@ -46,7 +49,7 @@ struct SheetTests {
         hello,,,Hello world!,Hallo wereld!,A greeting
         """
 
-        let sheet = try Sheet(csv: csvString, configParsingMode: .multipleConfigColumns)
+        let sheet = try Sheet(csv: csvString)
         let actual = try sheet.entries()
 
         let expected = [
@@ -71,7 +74,7 @@ struct SheetTests {
         farewell,,,Goodbye,,A farewell
         """
 
-        let sheet = try Sheet(csv: csvString, configParsingMode: .multipleConfigColumns)
+        let sheet = try Sheet(csv: csvString)
 
         #expect(throws: LocaleasyError.missingTranslation(key: "farewell", locale: "nl")) {
             _ = try sheet.entries()
@@ -87,7 +90,7 @@ struct SheetTests {
         about,web,,About this website,Over deze website,An entry with variant Web
         """
 
-        let sheet = try Sheet(csv: csvString, configParsingMode: .multipleConfigColumns)
+        let sheet = try Sheet(csv: csvString)
         let actual = try sheet.entries(forVariant: "ios")
 
         let expected = [
@@ -109,7 +112,7 @@ struct SheetTests {
         about,web,,About this website,Over deze website,An entry with variant Web
         """
 
-        let sheet = try Sheet(csv: csvString, configParsingMode: .multipleConfigColumns)
+        let sheet = try Sheet(csv: csvString)
 
         #expect(throws: LocaleasyError.variantArgumentRequired) {
             _ = try sheet.entries()

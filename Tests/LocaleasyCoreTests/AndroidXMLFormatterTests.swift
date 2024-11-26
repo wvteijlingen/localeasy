@@ -271,7 +271,7 @@ struct AndroidXMLFormatterTests {
 }
 
 private func formatUsingAndroidXMLFormatter(_ csv: String, locale: String, variant: String?) throws -> String {
-    let sheet = try Sheet(csv: csv, configParsingMode: .multipleConfigColumns)
+    let sheet = try Sheet(csv: csv)
     let formatter = AndroidXMLFormatter(sheet: sheet, locale: "en", variant: variant)
 
     let actual = try formatter.format()

@@ -77,11 +77,6 @@ public struct Translation: Equatable {
     let quantity: Quantity?
 }
 
-public enum ConfigParsingMode {
-    case singleConfigColumn
-    case multipleConfigColumns
-}
-
 // MARK: - Raw models
 
 struct Row: Identifiable {
@@ -98,31 +93,6 @@ struct Row: Identifiable {
 struct RowConfig {
     var variant: String?
     var quantity: Quantity?
-
-    init(configString: String?) throws {
-        if let configString, !configString.isEmpty {
-            let rules = configString.split(separator: "\n").map(String.init)
-
-            for rule in rules {
-                let ruleComponents = rule.split(separator: ":").map(String.init)
-
-                guard ruleComponents.count == 2 else {
-                    throw LocaleasyError.malformedConfigRule(rule)
-                }
-
-                switch ruleComponents[0] {
-                case "quantity":
-                    self.quantity = try Quantity(quantity: ruleComponents[1])
-                case "variant":
-                    self.variant = ruleComponents[1]
-                default:
-                    throw LocaleasyError.unknownConfigKey(ruleComponents[0])
-                }
-            }
-        } else {
-            self.quantity = nil
-        }
-    }
 
     init(variant: String?, quantity: String?) throws {
         if let quantity, !quantity.isEmpty {

@@ -88,12 +88,9 @@ struct AppleStringsFormatterTests {
 }
 
 private func formatUsingAppleStringsFormatter(_ csv: String, locale: String, variant: String?) throws -> String {
-    let sheet = try Sheet(csv: csv, configParsingMode: .multipleConfigColumns)
+    let sheet = try Sheet(csv: csv)
     let formatter = AppleStringsFormatter(sheet: sheet, locale: "en", variant: variant)
 
     let actual = try formatter.format()
     return String(decoding: actual, as: Unicode.UTF8.self)
 }
-
-// https://stackoverflow.com/questions/33713084/download-link-for-google-spreadsheets-csv-export-with-multiple-sheets
-// https://docs.google.com/spreadsheets/d/1DHMEjSAMCT3vJxEN72VmwWquhLIK5KVnyLGtQF3x1No/gviz/tq?tqx=out:csv&sheet=1657396956
