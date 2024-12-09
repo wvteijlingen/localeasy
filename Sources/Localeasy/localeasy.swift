@@ -18,7 +18,7 @@ struct Localeasy: ParsableCommand {
     @Option(name: .customLong("out"), help: "Path to output file. If --out is not specified, output will be directed to stdout")
     private var output: String?
 
-    @Option(help: "Output format. Either 'androidXml', 'appleStringsCatalog', or 'appleStrings'")
+    @Option(help: "Output format")
     private var format: OutputFormat
 
     @Option(help: "Output locale. Only applicable when format is 'androidXml' or 'appleStrings'")
