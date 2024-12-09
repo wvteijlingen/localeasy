@@ -37,6 +37,42 @@ struct AppleStringsCatalogFormatterTests {
         #expect(actual == expected)
     }
 
+    @Test("format() method - commented entry")
+    func formatCommentedEntry() async throws {
+        let csvString = CSVFixtures.commented
+
+        let actual = try formatUsingAppleStringsCatalogFormatter(csvString, variant: nil)
+
+        let expected = """
+        {
+          "sourceLanguage" : "en",
+          "strings" : {
+            "plain" : {
+              "comment" : "This is the comment",
+              "extractionState" : "manual",
+              "localizations" : {
+                "en" : {
+                  "stringUnit" : {
+                    "state" : "translated",
+                    "value" : "Hello world!"
+                  }
+                },
+                "nl" : {
+                  "stringUnit" : {
+                    "state" : "translated",
+                    "value" : "Hallo wereld!"
+                  }
+                }
+              }
+            }
+          },
+          "version" : "1.0"
+        }
+        """
+
+        #expect(actual == expected)
+    }
+
     @Test("format() method - multiline entry")
     func formatMultilineEntry() async throws {
         let csvString = CSVFixtures.multiline

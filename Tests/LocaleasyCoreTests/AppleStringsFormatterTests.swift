@@ -9,6 +9,24 @@ struct AppleStringsFormatterTests {
         let actual = try formatUsingAppleStringsFormatter(csvString, locale: "en", variant: nil)
 
         let expected = """
+        // \(Configuration.fileHeader)
+        
+        "plain" = "Hello world!";
+        """
+
+        #expect(actual == expected)
+    }
+
+    @Test("format() method - commented entry")
+    func formatCommentedEntry() async throws {
+        let csvString = CSVFixtures.commented
+
+        let actual = try formatUsingAppleStringsFormatter(csvString, locale: "en", variant: nil)
+
+        let expected = """
+        // \(Configuration.fileHeader)
+        
+        // This is the comment
         "plain" = "Hello world!";
         """
 
@@ -22,6 +40,8 @@ struct AppleStringsFormatterTests {
         let actual = try formatUsingAppleStringsFormatter(csvString, locale: "en", variant: nil)
 
         let expected = """
+        // \(Configuration.fileHeader)
+        
         "multiline" = "Multiline \\n translation";
         """
 
@@ -35,6 +55,8 @@ struct AppleStringsFormatterTests {
         let actual = try formatUsingAppleStringsFormatter(csvString, locale: "en", variant: nil)
 
         let expected = """
+        // \(Configuration.fileHeader)
+        
         "birds_zero" = "%1$lld birds (zero)";
         "birds_one" = "%1$lld bird (one)";
         "birds_two" = "%1$lld birds (two)";
@@ -53,6 +75,8 @@ struct AppleStringsFormatterTests {
         let actual = try formatUsingAppleStringsFormatter(csvString, locale: "en", variant: nil)
 
         let expected = """
+        // \(Configuration.fileHeader)
+        
         "int" = "Int %d";
         "int positional" = "Int %1$d";
         "long" = "Long %d";
@@ -71,6 +95,8 @@ struct AppleStringsFormatterTests {
         let actual = try formatUsingAppleStringsFormatter(csvString, locale: "en", variant: "ios")
 
         let expected = """
+        // \(Configuration.fileHeader)
+        
         "about" = "About this iOS app";
         """
 

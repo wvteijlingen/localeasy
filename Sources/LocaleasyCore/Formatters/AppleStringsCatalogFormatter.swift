@@ -35,7 +35,7 @@ private enum StringsCatalog {
         }
 
         func addEntry(entry: Entry) {
-            let stringsValue = StringsValue()
+            let stringsValue = StringsValue(comment: entry.comment.isEmpty ? nil : entry.comment)
 
             for (locale, translations) in entry.translationsByLocale {
                 if entry.isPluralized(forLocale: locale) {
@@ -50,8 +50,13 @@ private enum StringsCatalog {
     }
 
     class StringsValue: Encodable {
+        let comment: String?
         let extractionState = "manual"
         var localizations: [String: Localization] = [:]
+
+        init(comment: String?) {
+            self.comment = comment
+        }
 
         func addTranslation(_ translation: String, forLocale locale: String) {
             localizations[locale] = Localization(

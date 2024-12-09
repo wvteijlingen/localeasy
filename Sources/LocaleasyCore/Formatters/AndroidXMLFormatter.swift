@@ -46,10 +46,18 @@ public struct AndroidXMLFormatter: Formatter {
         let encoder = XMLEncoder()
         encoder.outputFormatting = [.prettyPrinted]
 
-        let resources = AndroidXML.Resources(strings: strings, plurals: plurals)
-        let header = XMLHeader(version: 1.0, encoding: "utf-8")
+        let xmlResources = AndroidXML.Resources(strings: strings, plurals: plurals)
+        let xmlHeader = XMLHeader(version: 1.0, encoding: "utf-8")
 
-        return try encoder.encode(resources, withRootKey: "resources", header: header)
+        let fileContents = String(
+            data: try encoder.encode(xmlResources, withRootKey: "resources", header: xmlHeader),
+            encoding: .utf8
+        )!
+        let fileHeader = "<!-- \(Configuration.fileHeader) -->"
+
+        return [fileHeader, fileContents]
+            .joined(separator: "\n\n")
+            .data(using: .utf8)!
     }
 
     private func escaping(_ input: String) -> String {

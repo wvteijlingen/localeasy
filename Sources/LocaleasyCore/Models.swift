@@ -64,7 +64,7 @@ public enum LocaleasyError: LocalizedError, Equatable {
 public struct Entry: Equatable {
     let key: String
     let variant: String?
-    let comment: String?
+    let comment: String
     let translationsByLocale: [String: [Translation]]
 
     func isPluralized(forLocale locale: String) -> Bool {

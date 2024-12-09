@@ -9,7 +9,7 @@ struct Localeasy: ParsableCommand {
     static var configuration = CommandConfiguration(
         abstract: "Parses csv input and generates localization files for different platforms.",
         discussion: "Localeasy will read from stdin unless the --in argument is specified, and write to stdout unless the --out argument is specified.",
-        version: "0.1"
+        version: LocaleasyCore.Configuration.version
     )
 
     @Option(name: .customLong("in"), help: "File path or http(s) URL to comma separated csv file. If --in is not specified, input will be read from stdin")

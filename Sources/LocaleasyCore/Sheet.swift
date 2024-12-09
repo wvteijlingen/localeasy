@@ -72,7 +72,7 @@ public class Sheet {
             Entry(
                 key: key,
                 variant: variant,
-                comment: rows.first?.comment,
+                comment: rows.first?.comment ?? "",
                 translationsByLocale: try locales.reduce(into: [:]) { translationsByLocale, locale in
                     translationsByLocale[locale] = try rows.reduce(into: []) { translations, row in
                         if let translationValue = row.translationsByLocale[locale], !translationValue.isEmpty {
@@ -89,41 +89,4 @@ public class Sheet {
             lhs.key < rhs.key
         }
     }
-
-//    func entries(nestedBy nestingSeparator: String, variant: String? = nil) throws -> [NestedEntry] {
-//        func nest(entry: Entry, in group: inout [NestedEntry]) {
-//            guard entry.key.contains(nestingSeparator) else {
-//                group.append(.entry(entry))
-//                return
-//            }
-//
-//            let subgroupKey = String(entry.key.split(separator: ".")[0])
-//
-//            let newEntry = Entry(
-//                key: String(entry.key.suffix(entry.key.count - (subgroupKey.count + 1))),
-//                variant: entry.variant,
-//                comment: entry.comment,
-//                translationsByLocale: entry.translationsByLocale
-//            )
-//
-//            if var existingGroup = group.first(where: { $0.key == subgroupKey }) {
-//                nest(entry: newEntry, in: &existingGroup)
-//            } else {
-//                let newGroup = NestedEntry.group(subgroupKey, [])
-//                group.append(newGroup)
-//
-//
-//                nest(entry: newEntry, in: &newGroup)
-//            }
-//        }
-//
-//        let entries = try entries(variant: variant)
-//        var nestedEntries: [String: NestedEntry] = []
-//
-//        for entry in entries {
-//            nest(entry: entry, in: &nestedEntries)
-//        }
-//
-//        return nestedEntries
-//    }
 }

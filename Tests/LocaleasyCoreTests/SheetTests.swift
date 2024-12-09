@@ -45,7 +45,7 @@ struct SheetTests {
     func entries() throws {
         let csvString = """
         key,variant,quantity,en,nl,comment
-        farewell,,,Goodbye,Tot ziens,A farewell
+        farewell,,,Goodbye,Tot ziens,
         hello,,,Hello world!,Hallo wereld!,A greeting
         """
 
@@ -53,7 +53,7 @@ struct SheetTests {
         let actual = try sheet.entries()
 
         let expected = [
-            Entry(key: "farewell", variant: nil, comment: "A farewell", translationsByLocale: [
+            Entry(key: "farewell", variant: nil, comment: "", translationsByLocale: [
                 "en": [Translation(value: "Goodbye", quantity: nil)],
                 "nl": [Translation(value: "Tot ziens", quantity: nil)],
             ]),

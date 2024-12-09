@@ -9,6 +9,8 @@ struct AndroidXMLFormatterTests {
         let actual = try formatUsingAndroidXMLFormatter(csvString, locale: "en", variant: nil)
 
         let expected = """
+        <!-- \(Configuration.fileHeader) -->
+        
         <?xml version="1.0" encoding="utf-8"?>
         <resources>
             <string name="plain">
@@ -27,6 +29,8 @@ struct AndroidXMLFormatterTests {
         let actual = try formatUsingAndroidXMLFormatter(csvString, locale: "en", variant: nil)
 
         let expected = """
+        <!-- \(Configuration.fileHeader) -->
+        
         <?xml version="1.0" encoding="utf-8"?>
         <resources>
             <string name="ampersand">
@@ -63,6 +67,8 @@ struct AndroidXMLFormatterTests {
         let actual = try formatUsingAndroidXMLFormatter(csvString, locale: "en", variant: nil)
 
         let expected = """
+        <!-- \(Configuration.fileHeader) -->
+        
         <?xml version="1.0" encoding="utf-8"?>
         <resources>
             <string name="multiline">
@@ -81,6 +87,8 @@ struct AndroidXMLFormatterTests {
         let actual = try formatUsingAndroidXMLFormatter(csvString, locale: "en", variant: nil)
 
         let expected = """
+        <!-- \(Configuration.fileHeader) -->
+        
         <?xml version="1.0" encoding="utf-8"?>
         <resources>
             <plurals name="birds">
@@ -216,6 +224,8 @@ struct AndroidXMLFormatterTests {
         let actual = try formatUsingAndroidXMLFormatter(csvString, locale: "en", variant: nil)
 
         let expected = """
+        <!-- \(Configuration.fileHeader) -->
+        
         <?xml version="1.0" encoding="utf-8"?>
         <resources>
             <string name="int">
@@ -249,6 +259,8 @@ struct AndroidXMLFormatterTests {
         let actual = try formatUsingAndroidXMLFormatter(csvString, locale: "en", variant: "android")
 
         let expected = """
+        <!-- \(Configuration.fileHeader) -->
+        
         <?xml version="1.0" encoding="utf-8"?>
         <resources>
             <string name="about">

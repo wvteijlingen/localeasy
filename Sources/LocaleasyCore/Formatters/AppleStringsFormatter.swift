@@ -14,7 +14,7 @@ public struct AppleStringsFormatter: Formatter {
     public func format() throws -> Data {
         let entries = try sheet.entries(forVariant: variant)
 
-        return entries
+        let fileContents = entries
             .flatMap { entry in
                 let translations = entry.translationsByLocale[locale] ?? []
 
@@ -29,10 +29,18 @@ public struct AppleStringsFormatter: Formatter {
 
                     let value = convertingPlaceholders(escaping(translation.value))
 
-                    return "\"\(key)\" = \"\(escaping(value))\";"
+                    return [
+                        entry.comment.isEmpty ? nil : "// \(entry.comment)",
+                        "\"\(key)\" = \"\(escaping(value))\";"
+                    ].compactMap { $0 }.joined(separator: "\n")
                 }
             }
             .joined(separator: "\n")
+
+        let fileHeader = "// \(Configuration.fileHeader)"
+
+        return [fileHeader, fileContents]
+            .joined(separator: "\n\n")
             .data(using: .utf8)!
     }
 
