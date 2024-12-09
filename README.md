@@ -1,5 +1,3 @@
-<img src="./localeasy.png" width="150" height="150"/>
-
 # Localeasy - Effortless app localization
 
 Localeasy converts CSV to platform specific localization formats. Localeasy parses your spreadsheet, and generates Apple Strings, Apple String Catalog, or Android XML files.
@@ -26,22 +24,34 @@ You can also download and run the latest binary.
 
 ## Usage
 
-Run the `localeasy` command to and generate a localization file from a CSV file.
+Run the `localeasy` command to generate a localization file from a CSV file.
 
-For example, using a Google Sheet public link:
+### Examples
+
+**Reading from a Google Sheet public link and writing to a local file**
 
 ```bash
 localeasy \
-  --csv https://docs.google.com/spreadsheets/d/123/edit?gid=0#gid=0 \
+  --in https://docs.google.com/spreadsheets/d/123/edit?gid=0#gid=0 \
+  --out path/to/file.xml
   --format androidXml \
   --locale en
 ```
 
-Or a local CSV file:
+**Reading from a local CSV file and writing to a local file**
 
 ```bash
 localeasy \
-  --csv path/to/file.csv \
+  --in path/to/file.csv \
+  --out path/to/file.xml
+  --format androidXml \
+  --locale en
+```
+
+**Reading from stdin, and writing to a stdout**
+
+```bash
+localeasy \
   --format androidXml \
   --locale en
 ```
