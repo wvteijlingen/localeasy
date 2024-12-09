@@ -26,6 +26,21 @@ You can also download and run the latest binary.
 
 Run the `localeasy` command to generate a localization file from a CSV file.
 
+<details>
+
+<summary>Command line options</summary>
+
+```bash
+  --in <in>               File path or http(s) URL to comma separated csv file.
+                          If --in is not specified, input will be read from stdin
+  --out <out>             Path to output file. If --out is not specified, output will be directed to stdout
+  --format <format>       Output format. Either 'androidXml', 'appleStringsCatalog', or 'appleStrings'
+  --locale <locale>       Output locale. Only applicable when format is 'androidXml' or 'appleStrings'
+  --variant <variant>     Translation variant. Required when csv input contains translations with variants
+```
+
+</details>
+
 ### Examples
 
 **Reading from a Google Sheet public link and writing to a local file**
