@@ -16,6 +16,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Select Xcode
+      run: xcodes select 16.1
     - name: Build
       run: swift build -v
     - name: Run tests
