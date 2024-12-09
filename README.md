@@ -143,3 +143,10 @@ Localeasy will automatically convert string placeholders for Apple file formats.
 You can always use `%s` or `%1$s`, Localeasy will automatically convert them to `%@` and `%1$@`
 
 For example: The string `Welcome %s!` will be formatted as `Welcome %s!` for Android, and as `Welcome %@!` for iOS.
+
+## Current limitations
+
+If you have need for the following more advanced features, Localeasy might not be the perfect fit for your project:
+
+1. Android XML: [String arrays](https://developer.android.com/guide/topics/resources/string-resource#StringArray) are not supported.
+2. iOS String Catalogs: "Vary by device" is not supported. You might be able to use variants instead.
