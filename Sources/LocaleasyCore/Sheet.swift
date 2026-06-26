@@ -22,10 +22,13 @@ public class Sheet {
 
         var seenRowIDs: Set<Row.ID> = []
 
-        self.rows = try csv.rows.enumerated().map { offset, rowData in
+        self.rows = try csv.rows.enumerated().compactMap { offset, rowData in
+            let isEmptyRow = rowData.values.allSatisfy(\.isEmpty)
+            if isEmptyRow { return nil }
+
             let rowNumber = offset + 2 // Account for the sheet row index being 1-based, and the header row
 
-            do {
+            do {    
                 guard let key = rowData["key"], !key.isEmpty else {
                     throw LocaleasyError.missingKey
                 }
