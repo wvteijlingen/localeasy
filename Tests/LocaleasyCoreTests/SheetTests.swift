@@ -29,6 +29,34 @@ struct SheetTests {
         }
     }
 
+    @Test("Creating a Sheet from a CSV String - missing keys")
+    func csvStringInitializerMissingKeys() throws {
+        let csvString = """
+            key,variant,quantity,en,nl,comment
+            ,,,Hi,Hoi,An entry without a key
+            """
+
+        do {
+            _ = try Sheet(csv: csvString)
+            Issue.record("init(csv:) should throw on missing keys")
+        } catch {
+            let localeasyError = (error as? RowError)?.error as? LocaleasyError
+            #expect(localeasyError == LocaleasyError.missingKey)
+        }
+    }
+
+    @Test("Creating a Sheet from a CSV String - empty rows")
+    func csvStringInitializerEmptyRows() throws {
+        let csvString = """
+            key,variant,quantity,en,nl,comment
+            key1,,,Hi,Hoi,Foo
+            ,,,,,
+            key2,,,Hi,Hoi,Bar
+            """
+
+        _ = try Sheet(csv: csvString)
+    }
+
     @Test("Creating a Sheet from a CSV String - throws on invalid quantity specifier")
     func csvStringInitializerInvalidQuantity() throws {
         let csvString = """
