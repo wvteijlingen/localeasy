@@ -92,6 +92,7 @@ The order of the columns does not matter, as long as at least the following colu
 
 Additionally you can add the following columns to enable plurals, translation variants, and comments:
 
+- `group`: Optional column whose content will be prepended to the key of the translation entry, using an underscore as separator.
 - `quantity`: Optional column that contains the quantity of a pluralized translation entry.
 - `variant`: Optional column that contains the variant of a translation entry.
 - `comment`: Optional column that contains an comment for a translation entry.
