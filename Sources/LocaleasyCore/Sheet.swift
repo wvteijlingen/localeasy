@@ -16,7 +16,7 @@ public class Sheet {
     }
 
     private init(csv: CSV<Named>) throws {
-        let reservedColumnNames = ["key", "variant", "quantity", "comment"]
+        let reservedColumnNames = ["group", "key", "variant", "quantity", "comment"]
         let locales = csv.header.filter { !reservedColumnNames.contains($0) }
         self.locales = locales
 
@@ -34,10 +34,13 @@ public class Sheet {
                 }
 
                 let config = try RowConfig(variant: rowData["variant"], quantity: rowData["quantity"])
+                let fullyQualifiedKey = [rowData["group"], key]
+                    .compactMap { $0 }
+                    .joined(separator: "_")
 
                 let row = Row(
                     rowNumber: rowNumber,
-                    key: key,
+                    key: fullyQualifiedKey,
                     config: config,
                     comment: rowData["comment"],
                     translationsByLocale: locales.reduce(into: [:], { translationsByLocale, locale in

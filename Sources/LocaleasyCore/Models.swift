@@ -95,7 +95,7 @@ struct RowConfig {
     var quantity: Quantity?
 
     init(variant: String?, quantity: String?) throws {
-        if let quantity, !quantity.isEmpty {
+        if let quantity, !quantity.isEmpty, quantity != "-" {
             self.quantity = try Quantity(quantity: quantity)
         }
 
