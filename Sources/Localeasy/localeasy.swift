@@ -2,8 +2,6 @@ import ArgumentParser
 import Foundation
 import LocaleasyCore
 
-private var standardError = FileHandle.standardError
-
 @main
 struct Localeasy: ParsableCommand {
     static var configuration = CommandConfiguration(
@@ -50,29 +48,28 @@ struct Localeasy: ParsableCommand {
             throw LocaleasyError.inputRequired
         }
 
-        let data: Data
+        let outputData: Data
 
         switch format {
         case .androidXml:
             guard let locale else { throw LocaleasyError.localeArgumentRequired }
-            data = try AndroidXMLFormatter(sheet: sheet, locale: locale, variant: variant).format()
+            outputData = try AndroidXMLFormatter(sheet: sheet, locale: locale, variant: variant).format()
 
         case .appleStringsCatalog:
             // Don't print warnings when output is stdout, it will clobber the output formatting
             if case .url = output, locale?.isEmpty == false {
-                print(
-                    "Warning: argument '--locale' will be ignored when combined with '--format appleStringsCatalog'",
-                    to: &standardError
-                )
+                FileHandle.standardError.write(Data(
+                    "Warning: argument '--locale' will be ignored when combined with '--format appleStringsCatalog'\n".utf8
+                ))
             }
-            data = try AppleStringsCatalogFormatter(sheet: sheet, variant: variant).format()
+            outputData = try AppleStringsCatalogFormatter(sheet: sheet, variant: variant).format()
 
         case .appleStrings:
             guard let locale else { throw LocaleasyError.localeArgumentRequired }
-            data = try AppleStringsFormatter(sheet: sheet, locale: locale, variant: variant).format()
+            outputData = try AppleStringsFormatter(sheet: sheet, locale: locale, variant: variant).format()
         }
 
-        try output.write(data: data)
+        try output.write(data: outputData)
     }
 
     private func readStdin() -> String? {
@@ -127,12 +124,5 @@ private enum Output {
         case .url(let url):
             try data.write(to: url)
         }
-    }
-}
-
-extension FileHandle: @retroactive TextOutputStream {
-    public func write(_ string: String) {
-        let data = Data(string.utf8)
-        self.write(data)
     }
 }
