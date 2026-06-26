@@ -93,6 +93,35 @@ struct SheetTests {
 
         #expect(actual == expected)
     }
+    
+    @Test("entries(forVariant:) method - with group")
+    func entriesWithGroup() throws {
+        let csvString = """
+            group,key,variant,quantity,en,nl,comment
+            group1,farewell,,,Goodbye,Tot ziens,
+            group2,hello,,,Hello world!,Hallo wereld!,A greeting
+            """
+
+        let sheet = try Sheet(csv: csvString)
+        let actual = try sheet.entries()
+
+        let expected = [
+            Entry(
+                key: "group1_farewell", variant: nil, comment: "",
+                translationsByLocale: [
+                    "en": [Translation(value: "Goodbye", quantity: nil)],
+                    "nl": [Translation(value: "Tot ziens", quantity: nil)],
+                ]),
+            Entry(
+                key: "group2_hello", variant: nil, comment: "A greeting",
+                translationsByLocale: [
+                    "en": [Translation(value: "Hello world!", quantity: nil)],
+                    "nl": [Translation(value: "Hallo wereld!", quantity: nil)],
+                ]),
+        ]
+
+        #expect(actual == expected)
+    }
 
     @Test("entries(forVariant:) method - missing translation")
     func entriesMissingTranslation() throws {
