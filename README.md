@@ -4,7 +4,7 @@ Localeasy converts CSV to platform specific localization formats. Localeasy pars
 
 This means you can use any tabular data format to store and manage your translations, as long as you can export it to CSV.
 
-For example, you can use Google Sheets, which hase many benefits such as easy user management, change tracking, comments, no limits on contributors, and being free of charge.
+For example, you can use Google Sheets, which has many benefits such as easy user management, change tracking, comments, no limits on contributors, and being free of charge.
 
 ## Installation
 
@@ -20,7 +20,7 @@ You can also download and run the latest binary.
 
 ## Setup
 
-1. Make sure your spreadsheet is set up beforehand. See [Sheet configuration](#sheet-configuration).
+Make sure your spreadsheet is set up beforehand. See [Sheet configuration](#sheet-configuration).
 
 ## Usage
 
@@ -63,7 +63,7 @@ localeasy \
   --locale en
 ```
 
-**Reading from stdin, and writing to a stdout**
+**Reading from stdin and writing to stdout**
 
 ```bash
 localeasy \
@@ -95,7 +95,7 @@ Additionally you can add the following columns to enable plurals, translation va
 - `group`: Optional column whose content will be prepended to the key of the translation entry, using an underscore as separator.
 - `quantity`: Optional column that contains the quantity of a pluralized translation entry.
 - `variant`: Optional column that contains the variant of a translation entry.
-- `comment`: Optional column that contains an comment for a translation entry.
+- `comment`: Optional column that contains a comment for a translation entry.
 
 **Example**
 
