@@ -108,7 +108,6 @@ A fully configured sheet could look like this:
 | cow   |         |          | Cow        | Koe         | A grazing animal |
 | bird  |         | one      | %1$d bird  | %1$d vogel  | A flying animal  |
 | bird  |         | other    | %1$d birds | %1$d vogels |                  |
-| bird  |         | other    | %1$d birds | %1$d vogels |                  |
 | store | android |          | Play Store | Play Store  |                  |
 | store | ios     |          | App Store  | App Store   |                  |
 +-------+---------+----------+---------------------------------------------+
