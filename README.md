@@ -47,7 +47,7 @@ Run the `localeasy` command to generate a localization file from a CSV file.
 
 ```bash
 localeasy \
-  --in https://docs.google.com/spreadsheets/d/123/edit?gid=0#gid=0 \
+  --in https://docs.google.com/spreadsheets/d/123/export?format=csv \
   --out path/to/file.xml
   --format androidXml \
   --locale en
