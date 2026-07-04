@@ -1,5 +1,14 @@
 import Foundation
 
+public enum Column {
+    public static let key = "key"
+    public static let variant = "variant"
+    public static let quantity = "quantity"
+    public static let comment = "comment"
+
+    public static let allCases = [key, variant, quantity, comment]
+}
+
 public struct RowError: LocalizedError {
     let rowNumber: Int
     let error: Error
@@ -9,48 +18,26 @@ public struct RowError: LocalizedError {
     }
 }
 
-public enum LocaleasyError: LocalizedError, Equatable {
-    // CLI errors
-    case inputRequired
-    case localeArgumentRequired
-    case variantArgumentRequired
-    case invalidInputArgument
-    case invalidOutputArgument
-
-    // Sheet errors
+enum LocaleasyError: LocalizedError, Equatable {
     case missingKey
     case missingTranslation(key: String, locale: String)
-    case malformedConfigRule(String)
-    case unknownConfigKey(String)
     case invalidQuantity(String)
-    case duplicateRow
+    case duplicateRow(key: String, variant: String?, quantity: Quantity?)
+    case variantArgumentRequired
 
     public var errorDescription: String? {
         switch self {
-        case .inputRequired:
-            return "Argument '--in', or stdin is required"
-        case .localeArgumentRequired:
-            return "Selected output format requires the '--locale' argument to be set"
-        case .variantArgumentRequired:
-            return "Sheet contains entries with variants, specify which variant to export using the --variant argument"
-        case .invalidInputArgument:
-            return "The provided input file path or url is invalid"
-        case .invalidOutputArgument:
-            return "The provided output file path or url is invalid"
-
         case .missingKey:
             return "Key is missing"
         case .missingTranslation(let key, let locale):
             return "Key '\(key)' has no translation for locale '\(locale)'"
-        case .malformedConfigRule(let rule):
-            return "Malformed config rule '\(rule). Config rules must be specified as 'key:value'"
-        case .unknownConfigKey(let key):
-            return "Unknown config key '\(key). Valid keys are 'variant' and 'quantity'"
         case .invalidQuantity(let quantity):
             let validValues = Quantity.allCases.map(\.rawValue).joined(separator: "|")
             return "Invalid quantity specifier '\(quantity)'. Valid values are '\(validValues)'"
-        case .duplicateRow:
-            return "Row contains exact same combination of key, variant, and quantity of another row"
+        case .duplicateRow(let key, let variant, let quantity):
+            return "Duplicate row for key '\(key)', variant '\(variant ?? "-")', quantity '\(quantity?.rawValue ?? "-")'"
+        case .variantArgumentRequired:
+            return "Sheet contains entries with variants, specify which variant to export using the --variant argument"
         }
     }
 
@@ -83,6 +70,7 @@ struct Row: Identifiable {
     var id: String {
         "\(key)-\(config.variant ?? "novariant")-\(config.quantity?.rawValue ?? "noquantity")"
     }
+    
     let rowNumber: Int
     let key: String
     let config: RowConfig
@@ -91,16 +79,20 @@ struct Row: Identifiable {
 }
 
 struct RowConfig {
-    var variant: String?
-    var quantity: Quantity?
+    let variant: String?
+    let quantity: Quantity?
 
     init(variant: String?, quantity: String?) throws {
-        if let quantity, !quantity.isEmpty, quantity != "-" {
+        if let quantity, !quantity.isEmpty {
             self.quantity = try Quantity(quantity: quantity)
+        } else {
+            self.quantity = nil
         }
 
         if let variant, !variant.isEmpty {
             self.variant = variant
+        } else {
+            self.variant = nil
         }
     }
 }

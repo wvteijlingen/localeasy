@@ -5,44 +5,41 @@ public class Sheet {
     let locales: [String]
     private let rows: [Row]
 
-    public convenience init(csv: String) throws {
+    public convenience init(csv: String, locales: [String]) throws {
         let csv = try CSV<Named>(string: csv, delimiter: .comma)
-        try self.init(csv: csv)
+        try self.init(csv: csv, locales: locales)
     }
 
-    public convenience init(url: URL) throws {
+    public convenience init(url: URL, locales: [String]) throws {
         let csv = try CSV<Named>(url: url, delimiter: .comma)
-        try self.init(csv: csv)
+        try self.init(csv: csv, locales: locales)
     }
 
-    private init(csv: CSV<Named>) throws {
-        let reservedColumnNames = ["group", "key", "variant", "quantity", "comment"]
-        let locales = csv.header.filter { !reservedColumnNames.contains($0) }
+    private init(csv: CSV<Named>, locales: [String]) throws {
         self.locales = locales
 
+        let requiredColumns = Column.allCases + locales
         var seenRowIDs: Set<Row.ID> = []
 
         self.rows = try csv.rows.enumerated().compactMap { offset, rowData in
-            let isEmptyRow = rowData.values.allSatisfy(\.isEmpty)
-            if isEmptyRow { return nil }
+            // Skip rows that if all required columns are empty
+            let requiredValues = rowData.filter { requiredColumns.contains($0.key) }.values
+            if requiredValues.allSatisfy(\.isEmpty) { return nil }
 
             let rowNumber = offset + 2 // Account for the sheet row index being 1-based, and the header row
 
             do {    
-                guard let key = rowData["key"], !key.isEmpty else {
+                guard let key = rowData[Column.key], !key.isEmpty else {
                     throw LocaleasyError.missingKey
                 }
 
-                let config = try RowConfig(variant: rowData["variant"], quantity: rowData["quantity"])
-                let fullyQualifiedKey = [rowData["group"], key]
-                    .compactMap { $0 }
-                    .joined(separator: "_")
-
+                let config = try RowConfig(variant: rowData[Column.variant], quantity: rowData[Column.quantity])
+                
                 let row = Row(
                     rowNumber: rowNumber,
-                    key: fullyQualifiedKey,
+                    key: key,
                     config: config,
-                    comment: rowData["comment"],
+                    comment: rowData[Column.comment],
                     translationsByLocale: locales.reduce(into: [:], { translationsByLocale, locale in
                         translationsByLocale[locale] = rowData[locale]
                     })
@@ -51,7 +48,11 @@ public class Sheet {
                 let (inserted, _) = seenRowIDs.insert(row.id)
 
                 if !inserted {
-                    throw LocaleasyError.duplicateRow
+                    throw LocaleasyError.duplicateRow(
+                        key: key,
+                        variant: config.variant,
+                        quantity: config.quantity
+                    )
                 }
 
                 return row

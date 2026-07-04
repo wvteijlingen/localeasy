@@ -2,42 +2,42 @@ import Testing
 @testable import LocaleasyCore
 
 struct SheetTests {
-    @Test("Creating a Sheet from a CSV String")
+    @Test("init(csv:locales:)")
     func csvStringInitializer() throws {
-        let csvString = """
-        key,variant,quantity,en,nl,comment
-        plain,,,Hello world!,Hallo wereld!,A basic entry
-        """
+        let csvString = makeCSV(
+            ["key", "variant", "quantity", "en",           "nl",            "comment"],
+            ["hello", "",      "",         "Hello world!", "Hallo wereld!", "A basic entry"]
+        )
 
-        _ = try Sheet(csv: csvString)
+        _ = try Sheet(csv: csvString, locales: ["en", "nl"])
     }
 
-    @Test("Creating a Sheet from a CSV String - duplicate rows")
+    @Test("init(csv:locales:) - duplicate rows")
     func csvStringInitializerDuplicateRows() throws {
-        let csvString = """
-        key,variant,quantity,en,nl,comment
-        plain,,,Hello world!,Hallo wereld!,A basic entry
-        plain,,,Hi,Hoi,A duplicate entry
-        """
+        let csvString = makeCSV(
+            ["key",      "variant", "quantity", "en",           "nl",            "comment"],
+            ["duplicate", "",       "",         "Hello world!", "Hallo wereld!", "A basic entry"],
+            ["duplicate", "",       "",         "Hi",           "Hoi",           "A duplicate entry"]
+        )
 
         do {
-            _ = try Sheet(csv: csvString)
+            _ = try Sheet(csv: csvString, locales: ["en", "nl"])
             Issue.record("init(csv:) should throw on duplicate rows")
         } catch {
             let localeasyError = (error as? RowError)?.error as? LocaleasyError
-            #expect(localeasyError == LocaleasyError.duplicateRow)
+            #expect(localeasyError == LocaleasyError.duplicateRow(key: "duplicate", variant: nil, quantity: nil))
         }
     }
 
-    @Test("Creating a Sheet from a CSV String - missing keys")
+    @Test("init(csv:locales:) - missing keys")
     func csvStringInitializerMissingKeys() throws {
-        let csvString = """
-            key,variant,quantity,en,nl,comment
-            ,,,Hi,Hoi,An entry without a key
-            """
+        let csvString = makeCSV(
+            ["key", "variant", "quantity", "en", "nl", "comment"],
+            ["",     "",       "",         "Hi", "Hoi", "An entry without a key"]
+        )
 
         do {
-            _ = try Sheet(csv: csvString)
+            _ = try Sheet(csv: csvString, locales: ["en", "nl"])
             Issue.record("init(csv:) should throw on missing keys")
         } catch {
             let localeasyError = (error as? RowError)?.error as? LocaleasyError
@@ -45,39 +45,39 @@ struct SheetTests {
         }
     }
 
-    @Test("Creating a Sheet from a CSV String - empty rows")
+    @Test("init(csv:locales:) - empty rows")
     func csvStringInitializerEmptyRows() throws {
-        let csvString = """
-            key,variant,quantity,en,nl,comment
-            key1,,,Hi,Hoi,Foo
-            ,,,,,
-            key2,,,Hi,Hoi,Bar
-            """
+        let csvString = makeCSV(
+            ["key", "variant", "quantity", "en", "nl",  "comment", "extra"],
+            ["key1", "",       "",         "Hi", "Hoi", "Foo",     "Baz"],
+            ["",     "",       "",         "",   "",     "",       "Baz"],
+            ["key2", "",       "",         "Hi", "Hoi", "Bar",     "Baz"]
+        )
 
-        _ = try Sheet(csv: csvString)
+        _ = try Sheet(csv: csvString, locales: ["en", "nl"])
     }
 
-    @Test("Creating a Sheet from a CSV String - throws on invalid quantity specifier")
+    @Test("init(csv:locales:) - throws on invalid quantity specifier")
     func csvStringInitializerInvalidQuantity() throws {
-        let csvString = """
-        key,variant,quantity,en,nl,comment
-        about,,foo,About this iOS app,Over deze iOS app,An entry with variant iOS
-        """
+        let csvString = makeCSV(
+            ["key",   "variant", "quantity", "en", "nl",  "comment"],
+            ["about", "",        "invalid",  "Hi", "Hoi", "Foo"]
+        )
 
         #expect(throws: RowError.self) {
-            _ = try Sheet(csv: csvString)
+            _ = try Sheet(csv: csvString, locales: ["en", "nl"])
         }
     }
 
-    @Test("entries(forVariant:) method")
+    @Test("entries(forVariant:)")
     func entries() throws {
-        let csvString = """
-        key,variant,quantity,en,nl,comment
-        farewell,,,Goodbye,Tot ziens,
-        hello,,,Hello world!,Hallo wereld!,A greeting
-        """
+        let csvString = makeCSV(
+            ["key",      "variant", "quantity", "en",           "nl",            "comment"],
+            ["farewell", "",        "",         "Goodbye",      "Tot ziens",     ""],
+            ["hello",    "",        "",         "Hello world!", "Hallo wereld!", "A greeting"]
+        )
 
-        let sheet = try Sheet(csv: csvString)
+        let sheet = try Sheet(csv: csvString, locales: ["en", "nl"])
         let actual = try sheet.entries()
 
         let expected = [
@@ -93,61 +93,32 @@ struct SheetTests {
 
         #expect(actual == expected)
     }
-    
-    @Test("entries(forVariant:) method - with group")
-    func entriesWithGroup() throws {
-        let csvString = """
-            group,key,variant,quantity,en,nl,comment
-            group1,farewell,,,Goodbye,Tot ziens,
-            group2,hello,,,Hello world!,Hallo wereld!,A greeting
-            """
 
-        let sheet = try Sheet(csv: csvString)
-        let actual = try sheet.entries()
-
-        let expected = [
-            Entry(
-                key: "group1_farewell", variant: nil, comment: "",
-                translationsByLocale: [
-                    "en": [Translation(value: "Goodbye", quantity: nil)],
-                    "nl": [Translation(value: "Tot ziens", quantity: nil)],
-                ]),
-            Entry(
-                key: "group2_hello", variant: nil, comment: "A greeting",
-                translationsByLocale: [
-                    "en": [Translation(value: "Hello world!", quantity: nil)],
-                    "nl": [Translation(value: "Hallo wereld!", quantity: nil)],
-                ]),
-        ]
-
-        #expect(actual == expected)
-    }
-
-    @Test("entries(forVariant:) method - missing translation")
+    @Test("entries(forVariant:) - missing translation")
     func entriesMissingTranslation() throws {
-        let csvString = """
-        key,variant,quantity,en,nl,comment
-        hello,,,Hello world!,Hallo wereld!,A greeting
-        farewell,,,Goodbye,,A farewell
-        """
+        let csvString = makeCSV(
+            ["key",      "variant", "quantity", "en",           "nl",            "comment"],
+            ["farewell", "",        "",         "Goodbye",      "",              ""],
+            ["hello",    "",        "",         "Hello world!", "Hallo wereld!", "A greeting"]
+        )
 
-        let sheet = try Sheet(csv: csvString)
+        let sheet = try Sheet(csv: csvString, locales: ["en", "nl"])
 
         #expect(throws: LocaleasyError.missingTranslation(key: "farewell", locale: "nl")) {
             _ = try sheet.entries()
         }
     }
 
-    @Test("entries(forVariant:) method - with variant argument")
+    @Test("entries(forVariant:) - with variant argument")
     func entriesWithVariantArgument() throws {
-        let csvString = """
-        key,variant,quantity,en,nl,comment
-        about,ios,,About this iOS app,Over deze iOS app,An entry with variant iOS
-        about,android,,About this Android app,Over deze Android app,An entry with variant Android
-        about,web,,About this website,Over deze website,An entry with variant Web
-        """
+        let csvString = makeCSV(
+            ["key",    "variant", "quantity", "en",                      "nl",                     "comment"],
+            ["about",  "ios",     "",         "About this iOS app",      "Over deze iOS app",      "An entry with variant iOS"],
+            ["about",  "android", "",         "About this Android app",  "Over deze Android app",  "An entry with variant Android"],
+            ["about",  "web",     "",         "About this website",      "Over deze website",      "An entry with variant Web"]
+        )
 
-        let sheet = try Sheet(csv: csvString)
+        let sheet = try Sheet(csv: csvString, locales: ["en", "nl"])
         let actual = try sheet.entries(forVariant: "ios")
 
         let expected = [
@@ -160,16 +131,16 @@ struct SheetTests {
         #expect(actual == expected)
     }
 
-    @Test("entries(forVariant:) method - throws without variant argument")
+    @Test("entries(forVariant:) - throws without variant argument")
     func entriesMissingVariantArgument() throws {
-        let csvString = """
-        key,variant,quantity,en,nl,comment
-        about,ios,,About this iOS app,Over deze iOS app,An entry with variant iOS
-        about,android,,About this Android app,Over deze Android app,An entry with variant Android
-        about,web,,About this website,Over deze website,An entry with variant Web
-        """
+        let csvString = makeCSV(
+            ["key",    "variant", "quantity", "en",                      "nl",                     "comment"],
+            ["about",  "ios",     "",         "About this iOS app",      "Over deze iOS app",      "An entry with variant iOS"],
+            ["about",  "android", "",         "About this Android app",  "Over deze Android app",  "An entry with variant Android"],
+            ["about",  "web",     "",         "About this website",      "Over deze website",      "An entry with variant Web"]
+        )
 
-        let sheet = try Sheet(csv: csvString)
+        let sheet = try Sheet(csv: csvString, locales: ["en", "nl"])
 
         #expect(throws: LocaleasyError.variantArgumentRequired) {
             _ = try sheet.entries()

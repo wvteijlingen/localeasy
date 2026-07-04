@@ -2,7 +2,7 @@ import Testing
 @testable import LocaleasyCore
 
 struct AppleStringsCatalogFormatterTests {
-    @Test("format() method - plain entry")
+    @Test("format() - plain entry")
     func formatPlainEntry() async throws {
         let csvString = CSVFixtures.plain
 
@@ -37,7 +37,7 @@ struct AppleStringsCatalogFormatterTests {
         #expect(actual == expected)
     }
 
-    @Test("format() method - commented entry")
+    @Test("format() - commented entry")
     func formatCommentedEntry() async throws {
         let csvString = CSVFixtures.commented
 
@@ -73,7 +73,7 @@ struct AppleStringsCatalogFormatterTests {
         #expect(actual == expected)
     }
 
-    @Test("format() method - multiline entry")
+    @Test("format() - multiline entry")
     func formatMultilineEntry() async throws {
         let csvString = CSVFixtures.multiline
 
@@ -108,7 +108,7 @@ struct AppleStringsCatalogFormatterTests {
         #expect(actual == expected)
     }
 
-    @Test("format() method - pluralized entry")
+    @Test("format() - pluralized entry")
     func formatPluralizedEntry() async throws {
         let csvString = CSVFixtures.pluralized
 
@@ -215,7 +215,7 @@ struct AppleStringsCatalogFormatterTests {
         #expect(actual == expected)
     }
 
-    @Test("format() method - placeholders")
+    @Test("format() - placeholders")
     func formatPlaceholders() async throws {
         let csvString = CSVFixtures.placeholders
 
@@ -335,7 +335,7 @@ struct AppleStringsCatalogFormatterTests {
         #expect(actual == expected)
     }
 
-    @Test(".format() method - with variant argument")
+    @Test("format() - with variant argument")
     func formatWithVariant() async throws {
         let csvString = CSVFixtures.variants
 
@@ -370,7 +370,7 @@ struct AppleStringsCatalogFormatterTests {
         #expect(actual == expected)
     }
 
-    @Test(".format() method - throws without variant argument")
+    @Test("format() - throws without variant argument")
     func formatMissingVariantArgument() async throws {
         let csvString = CSVFixtures.variants
 
@@ -381,7 +381,7 @@ struct AppleStringsCatalogFormatterTests {
 }
 
 private func formatUsingAppleStringsCatalogFormatter(_ csv: String, variant: String?) throws -> String {
-    let sheet = try Sheet(csv: csv)
+    let sheet = try Sheet(csv: csv, locales: ["en", "nl"])
     let formatter = AppleStringsCatalogFormatter(sheet: sheet, variant: variant)
 
     let actual = try formatter.format()

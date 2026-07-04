@@ -19,110 +19,68 @@ struct Localeasy: ParsableCommand {
     @Option(help: "Output format")
     private var format: OutputFormat
 
-    @Option(help: "Output locale. Only applicable when format is 'androidXml' or 'appleStrings'")
-    private var locale: String?
+    @Option(help: "Output locale. To specify more than one, repeat the --locale option")
+    private var locale: [String]
 
-    @Option(help: "Translation variant. Required when csv file contains translations with variants")
+    @Option(help: "Translation variant. Required when input contains translations with variants")
     private var variant: String?
 
-    mutating func run() throws {
-        let sheet: Sheet
-
-        let output: Output = try self.output.map { output in
-            guard let outputURL = url(from: output) else {
-                throw LocaleasyError.invalidOutputArgument
-            }
-
-            return .url(outputURL)
-        } ?? .stdout
-
-        if let input {
-            guard let inputURL = url(from: input) else {
-                throw LocaleasyError.invalidInputArgument
-            }
-
-            sheet = try Sheet(url: inputURL)
-        } else if let stdin = readStdin() {
-            sheet = try Sheet(csv: stdin)
-        } else {
-            throw LocaleasyError.inputRequired
+    private var singleLocale: String {
+        get throws {
+            guard locale.count == 1 else { throw CLIError.tooManyLocales }
+            return locale[0]
         }
+    }
 
-        let outputData: Data
-
-        switch format {
+    func run() throws {
+        try validateLocalesArgument()
+        let output = try makeOutput()
+        let sheet = try makeSheet()
+        let outputData = switch format {
         case .androidXml:
-            guard let locale else { throw LocaleasyError.localeArgumentRequired }
-            outputData = try AndroidXMLFormatter(sheet: sheet, locale: locale, variant: variant).format()
+            try AndroidXMLFormatter(sheet: sheet, locale: singleLocale, variant: variant).format()
 
         case .appleStringsCatalog:
-            // Don't print warnings when output is stdout, it will clobber the output formatting
-            if case .url = output, locale?.isEmpty == false {
-                FileHandle.standardError.write(Data(
-                    "Warning: argument '--locale' will be ignored when combined with '--format appleStringsCatalog'\n".utf8
-                ))
-            }
-            outputData = try AppleStringsCatalogFormatter(sheet: sheet, variant: variant).format()
+            try AppleStringsCatalogFormatter(sheet: sheet, variant: variant).format()
 
         case .appleStrings:
-            guard let locale else { throw LocaleasyError.localeArgumentRequired }
-            outputData = try AppleStringsFormatter(sheet: sheet, locale: locale, variant: variant).format()
+            try AppleStringsFormatter(sheet: sheet, locale: singleLocale, variant: variant).format()
         }
 
         try output.write(data: outputData)
     }
 
-    private func readStdin() -> String? {
-        let standardInputFileDescriptor = FileHandle.standardInput.fileDescriptor
+    private func validateLocalesArgument() throws {
+        let invalidLocales = Set(locale).intersection(Set(Column.allCases))
 
-        // Set stdin to non-blocking mode
-        let flags = fcntl(standardInputFileDescriptor, F_GETFL)
-        _ = fcntl(standardInputFileDescriptor, F_SETFL, flags | O_NONBLOCK)
-
-        do {
-            // Attempt to read available data
-            let inputData = try FileHandle.standardInput.readToEnd()
-
-            guard let inputData, !inputData.isEmpty,
-                  let inputString = String(data: inputData, encoding: .utf8)
-            else {
-                return nil
-            }
-
-            return inputString.trimmingCharacters(in: .whitespacesAndNewlines)
-        } catch {
-            // Return nil if an exception occurs (no data available)
-            return nil
+        if !invalidLocales.isEmpty {
+            throw CLIError.invalidLocales(invalidLocales)
         }
     }
 
-    private func url(from input: String) -> URL? {
-        input.starts(with: "http://") || input.starts(with: "https://")
-            ? URL(string: input)
-            : URL(fileURLWithPath: input)
+    private func makeOutput() throws -> Output {
+        if let output = output {
+            guard let outputURL = url(from: output) else {
+                throw CLIError.invalidOutputArgument
+            }
+
+            return .url(outputURL)
+        } else {
+            return .stdout
+        }
     }
-}
 
-private enum OutputFormat: String, CaseIterable, ExpressibleByArgument {
-    case androidXml
-    case appleStringsCatalog
-    case appleStrings
+    private func makeSheet() throws -> Sheet {
+        if let input {
+            guard let inputURL = url(from: input) else {
+                throw CLIError.invalidInputArgument
+            }
 
-    init?(argument: String) {
-        self.init(rawValue: argument)
-    }
-}
-
-private enum Output {
-    case stdout
-    case url(URL)
-
-    func write(data: Data) throws {
-        switch self {
-        case .stdout:
-            print(String(decoding: data, as: Unicode.UTF8.self))
-        case .url(let url):
-            try data.write(to: url)
+            return try Sheet(url: inputURL, locales: locale)
+        } else if let stdin = readStdin() {
+            return try Sheet(csv: stdin, locales: locale)
+        } else {
+            throw CLIError.inputRequired
         }
     }
 }

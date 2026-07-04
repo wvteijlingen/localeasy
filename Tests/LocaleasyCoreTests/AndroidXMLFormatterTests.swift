@@ -2,214 +2,120 @@ import Testing
 @testable import LocaleasyCore
 
 struct AndroidXMLFormatterTests {
-    @Test("format() method - plain entry")
+    @Test("format() - plain entry")
     func formatPlainEntry() async throws {
         let csvString = CSVFixtures.plain
 
         let actual = try formatUsingAndroidXMLFormatter(csvString, locale: "en", variant: nil)
 
         let expected = """
-        <!-- \(Configuration.fileHeader) -->
-        
         <?xml version="1.0" encoding="utf-8"?>
+        <!-- \(Configuration.fileHeader) -->
         <resources>
-            <string name="plain">
-                <value>Hello world!</value>
-            </string>
+            <string name="plain">Hello world!</string>
         </resources>
         """
 
         #expect(actual == expected)
     }
 
-    @Test("format() method - special characters")
+    @Test("format() - special characters")
     func formatSpecialCharacters() async throws {
         let csvString = CSVFixtures.specialCharacters
 
         let actual = try formatUsingAndroidXMLFormatter(csvString, locale: "en", variant: nil)
 
         let expected = """
-        <!-- \(Configuration.fileHeader) -->
-        
         <?xml version="1.0" encoding="utf-8"?>
+        <!-- \(Configuration.fileHeader) -->
         <resources>
-            <string name="ampersand">
-                <value>Hello &amp; world</value>
-            </string>
-            <string name="atsign">
-                <value>Hello \\@ world</value>
-            </string>
-            <string name="doublequote">
-                <value>Hello &quot; world</value>
-            </string>
-            <string name="greaterthan">
-                <value>Hello &gt; world</value>
-            </string>
-            <string name="lessthan">
-                <value>Hello &lt; world</value>
-            </string>
-            <string name="questionmark">
-                <value>Hello \\? world</value>
-            </string>
-            <string name="singlequote">
-                <value>Hello &apos; world</value>
-            </string>
+            <string name="ampersand">Hello &amp; world</string>
+            <string name="atsign">Hello \\@ world</string>
+            <string name="doublequote">Hello &quot; world</string>
+            <string name="greaterthan">Hello &gt; world</string>
+            <string name="lessthan">Hello &lt; world</string>
+            <string name="questionmark">Hello \\? world</string>
+            <string name="singlequote">Hello &apos; world</string>
         </resources>
         """
 
         #expect(actual == expected)
     }
 
-    @Test("format() method - multiline entry")
+    @Test("format() - multiline entry")
     func formatMultilineEntry() async throws {
         let csvString = CSVFixtures.multiline
 
         let actual = try formatUsingAndroidXMLFormatter(csvString, locale: "en", variant: nil)
 
         let expected = """
-        <!-- \(Configuration.fileHeader) -->
-        
         <?xml version="1.0" encoding="utf-8"?>
+        <!-- \(Configuration.fileHeader) -->
         <resources>
-            <string name="multiline">
-                <value>Multiline \\n translation</value>
-            </string>
+            <string name="multiline">Multiline \\n translation</string>
         </resources>
         """
 
         #expect(actual == expected)
     }
 
-    @Test("format() method - pluralized entry")
+    @Test("format() - pluralized entry")
     func formatPluralizedEntry() async throws {
         let csvString = CSVFixtures.pluralized
 
         let actual = try formatUsingAndroidXMLFormatter(csvString, locale: "en", variant: nil)
 
         let expected = """
-        <!-- \(Configuration.fileHeader) -->
-        
         <?xml version="1.0" encoding="utf-8"?>
+        <!-- \(Configuration.fileHeader) -->
         <resources>
             <plurals name="birds">
-                <item quantity="zero">
-                    <value>%1$lld birds (zero)</value>
-                </item>
-                <item quantity="zero">
-                    <value>%1$lld bird (one)</value>
-                </item>
-                <item quantity="zero">
-                    <value>%1$lld birds (two)</value>
-                </item>
-                <item quantity="zero">
-                    <value>%1$lld birds (few)</value>
-                </item>
-                <item quantity="zero">
-                    <value>%1$lld birds (many)</value>
-                </item>
-                <item quantity="zero">
-                    <value>%1$lld birds (other)</value>
-                </item>
+                <item quantity="zero">%1$lld birds (zero)</item>
+                <item quantity="zero">%1$lld bird (one)</item>
+                <item quantity="zero">%1$lld birds (two)</item>
+                <item quantity="zero">%1$lld birds (few)</item>
+                <item quantity="zero">%1$lld birds (many)</item>
+                <item quantity="zero">%1$lld birds (other)</item>
             </plurals>
             <plurals name="birds">
-                <item quantity="one">
-                    <value>%1$lld birds (zero)</value>
-                </item>
-                <item quantity="one">
-                    <value>%1$lld bird (one)</value>
-                </item>
-                <item quantity="one">
-                    <value>%1$lld birds (two)</value>
-                </item>
-                <item quantity="one">
-                    <value>%1$lld birds (few)</value>
-                </item>
-                <item quantity="one">
-                    <value>%1$lld birds (many)</value>
-                </item>
-                <item quantity="one">
-                    <value>%1$lld birds (other)</value>
-                </item>
+                <item quantity="one">%1$lld birds (zero)</item>
+                <item quantity="one">%1$lld bird (one)</item>
+                <item quantity="one">%1$lld birds (two)</item>
+                <item quantity="one">%1$lld birds (few)</item>
+                <item quantity="one">%1$lld birds (many)</item>
+                <item quantity="one">%1$lld birds (other)</item>
             </plurals>
             <plurals name="birds">
-                <item quantity="two">
-                    <value>%1$lld birds (zero)</value>
-                </item>
-                <item quantity="two">
-                    <value>%1$lld bird (one)</value>
-                </item>
-                <item quantity="two">
-                    <value>%1$lld birds (two)</value>
-                </item>
-                <item quantity="two">
-                    <value>%1$lld birds (few)</value>
-                </item>
-                <item quantity="two">
-                    <value>%1$lld birds (many)</value>
-                </item>
-                <item quantity="two">
-                    <value>%1$lld birds (other)</value>
-                </item>
+                <item quantity="two">%1$lld birds (zero)</item>
+                <item quantity="two">%1$lld bird (one)</item>
+                <item quantity="two">%1$lld birds (two)</item>
+                <item quantity="two">%1$lld birds (few)</item>
+                <item quantity="two">%1$lld birds (many)</item>
+                <item quantity="two">%1$lld birds (other)</item>
             </plurals>
             <plurals name="birds">
-                <item quantity="few">
-                    <value>%1$lld birds (zero)</value>
-                </item>
-                <item quantity="few">
-                    <value>%1$lld bird (one)</value>
-                </item>
-                <item quantity="few">
-                    <value>%1$lld birds (two)</value>
-                </item>
-                <item quantity="few">
-                    <value>%1$lld birds (few)</value>
-                </item>
-                <item quantity="few">
-                    <value>%1$lld birds (many)</value>
-                </item>
-                <item quantity="few">
-                    <value>%1$lld birds (other)</value>
-                </item>
+                <item quantity="few">%1$lld birds (zero)</item>
+                <item quantity="few">%1$lld bird (one)</item>
+                <item quantity="few">%1$lld birds (two)</item>
+                <item quantity="few">%1$lld birds (few)</item>
+                <item quantity="few">%1$lld birds (many)</item>
+                <item quantity="few">%1$lld birds (other)</item>
             </plurals>
             <plurals name="birds">
-                <item quantity="many">
-                    <value>%1$lld birds (zero)</value>
-                </item>
-                <item quantity="many">
-                    <value>%1$lld bird (one)</value>
-                </item>
-                <item quantity="many">
-                    <value>%1$lld birds (two)</value>
-                </item>
-                <item quantity="many">
-                    <value>%1$lld birds (few)</value>
-                </item>
-                <item quantity="many">
-                    <value>%1$lld birds (many)</value>
-                </item>
-                <item quantity="many">
-                    <value>%1$lld birds (other)</value>
-                </item>
+                <item quantity="many">%1$lld birds (zero)</item>
+                <item quantity="many">%1$lld bird (one)</item>
+                <item quantity="many">%1$lld birds (two)</item>
+                <item quantity="many">%1$lld birds (few)</item>
+                <item quantity="many">%1$lld birds (many)</item>
+                <item quantity="many">%1$lld birds (other)</item>
             </plurals>
             <plurals name="birds">
-                <item quantity="other">
-                    <value>%1$lld birds (zero)</value>
-                </item>
-                <item quantity="other">
-                    <value>%1$lld bird (one)</value>
-                </item>
-                <item quantity="other">
-                    <value>%1$lld birds (two)</value>
-                </item>
-                <item quantity="other">
-                    <value>%1$lld birds (few)</value>
-                </item>
-                <item quantity="other">
-                    <value>%1$lld birds (many)</value>
-                </item>
-                <item quantity="other">
-                    <value>%1$lld birds (other)</value>
-                </item>
+                <item quantity="other">%1$lld birds (zero)</item>
+                <item quantity="other">%1$lld bird (one)</item>
+                <item quantity="other">%1$lld birds (two)</item>
+                <item quantity="other">%1$lld birds (few)</item>
+                <item quantity="other">%1$lld birds (many)</item>
+                <item quantity="other">%1$lld birds (other)</item>
             </plurals>
         </resources>
         """
@@ -217,62 +123,46 @@ struct AndroidXMLFormatterTests {
         #expect(actual == expected)
     }
 
-    @Test("format() method - placeholders")
+    @Test("format() - placeholders")
     func formatPlaceholders() async throws {
         let csvString = CSVFixtures.placeholders
 
         let actual = try formatUsingAndroidXMLFormatter(csvString, locale: "en", variant: nil)
 
         let expected = """
-        <!-- \(Configuration.fileHeader) -->
-        
         <?xml version="1.0" encoding="utf-8"?>
+        <!-- \(Configuration.fileHeader) -->
         <resources>
-            <string name="int">
-                <value>Int %d</value>
-            </string>
-            <string name="int positional">
-                <value>Int %1$d</value>
-            </string>
-            <string name="long">
-                <value>Long %d</value>
-            </string>
-            <string name="long positional">
-                <value>Long %1$d</value>
-            </string>
-            <string name="string">
-                <value>String %s</value>
-            </string>
-            <string name="string positional">
-                <value>String %1$s</value>
-            </string>
+            <string name="int">Int %d</string>
+            <string name="int positional">Int %1$d</string>
+            <string name="long">Long %d</string>
+            <string name="long positional">Long %1$d</string>
+            <string name="string">String %s</string>
+            <string name="string positional">String %1$s</string>
         </resources>
         """
 
         #expect(actual == expected)
     }
 
-    @Test(".format() method - with variant argument")
+    @Test("format() - with variant argument")
     func formatWithVariant() async throws {
         let csvString = CSVFixtures.variants
 
         let actual = try formatUsingAndroidXMLFormatter(csvString, locale: "en", variant: "android")
 
         let expected = """
-        <!-- \(Configuration.fileHeader) -->
-        
         <?xml version="1.0" encoding="utf-8"?>
+        <!-- \(Configuration.fileHeader) -->
         <resources>
-            <string name="about">
-                <value>About this Android app</value>
-            </string>
+            <string name="about">About this Android app</string>
         </resources>
         """
 
         #expect(actual == expected)
     }
 
-    @Test(".format() method - throws without variant argument")
+    @Test("format() - throws without variant argument")
     func formatMissingVariantArgument() async throws {
         let csvString = CSVFixtures.variants
 
@@ -283,8 +173,8 @@ struct AndroidXMLFormatterTests {
 }
 
 private func formatUsingAndroidXMLFormatter(_ csv: String, locale: String, variant: String?) throws -> String {
-    let sheet = try Sheet(csv: csv)
-    let formatter = AndroidXMLFormatter(sheet: sheet, locale: "en", variant: variant)
+    let sheet = try Sheet(csv: csv, locales: ["en", "nl"])
+    let formatter = AndroidXMLFormatter(sheet: sheet, locale: locale, variant: variant)
 
     let actual = try formatter.format()
     return String(decoding: actual, as: Unicode.UTF8.self)
