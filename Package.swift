@@ -10,9 +10,9 @@ let package = Package(
         .executable(name: "localeasy", targets: ["Localeasy"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.0"),
+        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.8.2"),
         .package(url: "https://github.com/swiftcsv/SwiftCSV.git", from: "0.10.0"),
-        .package(url: "https://github.com/CoreOffice/XMLCoder.git", from: "0.17.0")
+        .package(url: "https://github.com/CoreOffice/XMLCoder.git", from: "0.18.2")
     ],
     targets: [
         .executableTarget(
